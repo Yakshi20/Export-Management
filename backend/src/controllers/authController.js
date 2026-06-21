@@ -65,6 +65,11 @@ export const register = async (req, res) => {
       customBrokerLicense,
       portCode,
       mtoLicenseNumber,
+
+      farmerName,
+      farmLocation,
+      farmSize,
+      cropType,
     } = req.body;
 
     if (role === "exporter") {
@@ -95,6 +100,20 @@ export const register = async (req, res) => {
       });
       }
     }
+
+    if (role === "farmer") {
+  if (
+    !farmerName ||
+    !farmLocation ||
+    !cropType
+  ) {
+    return res.status(400).json({
+      success: false,
+      message:
+        "Farmer Name, Farm Location and Crop Type are required",
+    });
+  }
+}
 
     if (!otpStore[`${email}_verified`]) {
       return res.status(400).json({

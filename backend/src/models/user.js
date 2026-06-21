@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema(
   {
     role: {
       type: String,
-      enum: ["beginner", "exporter", "cha", "forwarder"],
+      enum: ["beginner", "exporter", "cha","former", "forwarder"],
       required: true,
     },
 
@@ -28,6 +28,11 @@ const userSchema = new mongoose.Schema(
     companyName: String,
     iecCode: String,
     gstNumber: String,
+
+    farmerName: String,
+    farmLocation: String,
+    farmSize: String,
+    cropType: String,
 
     customBrokerLicense: String,
     portCode: String,
