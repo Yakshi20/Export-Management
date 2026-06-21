@@ -70,6 +70,7 @@ export const register = async (req, res) => {
       farmLocation,
       farmSize,
       cropType,
+      aadhaarNumber,
     } = req.body;
 
     if (role === "exporter") {
@@ -100,17 +101,17 @@ export const register = async (req, res) => {
       });
       }
     }
-
-    if (role === "farmer") {
+if (role === "farmer") {
   if (
     !farmerName ||
+    !aadhaarNumber ||
     !farmLocation ||
     !cropType
   ) {
     return res.status(400).json({
       success: false,
       message:
-        "Farmer Name, Farm Location and Crop Type are required",
+        "Farmer Name, Aadhaar Number, Farm Location and Crop Type are required",
     });
   }
 }
