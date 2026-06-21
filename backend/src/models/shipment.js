@@ -61,7 +61,49 @@ const shipmentSchema = new mongoose.Schema(
 
     status: {
       type: String,
+      enum: ["Created", "Pre-Shipment Completed", "In Transit", "Customs Clearance", "Delivered"],
       default: "Created",
+    },
+
+    buyerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Buyer",
+    },
+
+    currentLocation: {
+      type: String,
+    },
+
+    eta: {
+      type: Date,
+    },
+
+    assignedForwarderId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    assignedChaId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    letterOfCredit: {
+      type: String,
+    },
+
+    complianceStatus: {
+      type: String,
+      default: "Pending",
+    },
+
+    complianceNotes: {
+      type: String,
+    },
+
+    shippingBillVerified: {
+      type: Boolean,
+      default: false,
     },
   },
   {

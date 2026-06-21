@@ -14,18 +14,23 @@ import beginnerAuthRoutes from "./routes/beginner/beginnerAuthRoutes.js";
 import exporterAuthRoutes from "./routes/exporter/exporterAuthRoutes.js";
 import preShipmentRoutes from "./routes/exporter/preShipmentRoutes.js";
 import postShipmentRoutes from "./routes/exporter/postShipmentRoutes.js";
+import buyerRoutes from "./routes/exporter/buyerRoutes.js";
 
 // Farmer
 import farmerAuthRoutes from "./routes/farmer/farmerAuthRoutes.js";
+import farmerProductRoutes from "./routes/farmer/farmerProductRoutes.js";
 
 // CHA
 import chaAuthRoutes from "./routes/cha/chaAuthRoutes.js";
+import chaShipmentRoutes from "./routes/cha/chaShipmentRoutes.js";
 
 // Forwarder
 import forwarderAuthRoutes from "./routes/forwarder/forwarderAuthRoutes.js";
+import forwarderShipmentRoutes from "./routes/forwarder/forwarderShipmentRoutes.js";
 
 // Adviser
 import adviserAuthRoutes from "./routes/adviser/adviserAuthRoutes.js";
+import adviserConsultationRoutes from "./routes/adviser/adviserConsultationRoutes.js";
 
 const app = express();
 
@@ -51,13 +56,18 @@ app.use("/api/beginner", beginnerAuthRoutes);
 app.use("/api/exporter", exporterAuthRoutes);
 app.use("/api/exporter/pre-shipment", preShipmentRoutes);
 app.use("/api/exporter/post-shipment", postShipmentRoutes);
+app.use("/api/exporter/buyers", buyerRoutes);
 
 app.use("/api/farmer", farmerAuthRoutes);
+app.use("/api/farmer", farmerProductRoutes);
 
 app.use("/api/cha", chaAuthRoutes);
+app.use("/api/cha", chaShipmentRoutes);
 
 app.use("/api/forwarder", forwarderAuthRoutes);
+app.use("/api/forwarder", forwarderShipmentRoutes);
 
 app.use("/api/adviser", adviserAuthRoutes);
+app.use("/api/adviser", adviserConsultationRoutes);
 
 export default app;
