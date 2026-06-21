@@ -13,10 +13,10 @@ import CHADashboard from './pages/cha/CHADashboard';
 import ForwarderDashboard from './pages/forwarder/ForwarderDashboard';
 import AdviserDashboard from './pages/adviser/AdviserDashboard';
 
-export default function App() {
+function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <AuthProvider>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/:role/login" element={<LoginPage />} />
@@ -29,9 +29,11 @@ export default function App() {
           <Route path="/forwarder/*" element={<ProtectedRoute role="forwarder"><ForwarderDashboard /></ProtectedRoute>} />
           <Route path="/adviser/*" element={<ProtectedRoute role="adviser"><AdviserDashboard /></ProtectedRoute>} />
 
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
+
+export default App;

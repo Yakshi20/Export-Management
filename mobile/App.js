@@ -1,20 +1,133 @@
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text } from 'react-native';
+import { AuthProvider, useAuth } from './src/context/AuthContext';
+import LoadingScreen from './src/components/LoadingScreen';
+
+import HomeScreen from './src/screens/HomeScreen';
+import LoginScreen from './src/screens/auth/LoginScreen';
+import RegisterScreen from './src/screens/auth/RegisterScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
+
+import ExporterDashboard from './src/screens/exporter/ExporterDashboard';
+import ShipmentsScreen from './src/screens/exporter/ShipmentsScreen';
+import CreateShipmentScreen from './src/screens/exporter/CreateShipmentScreen';
+import PreShipmentScreen from './src/screens/exporter/PreShipmentScreen';
+import PostShipmentScreen from './src/screens/exporter/PostShipmentScreen';
+import BuyersScreen from './src/screens/exporter/BuyersScreen';
+
+import FarmerDashboard from './src/screens/farmer/FarmerDashboard';
+import ProductsScreen from './src/screens/farmer/ProductsScreen';
+
+import CHADashboard from './src/screens/cha/CHADashboard';
+import CustomsClearanceScreen from './src/screens/cha/CustomsClearanceScreen';
+
+import ForwarderDashboard from './src/screens/forwarder/ForwarderDashboard';
+import ForwarderShipmentsScreen from './src/screens/forwarder/ForwarderShipmentsScreen';
+
+import AdviserDashboard from './src/screens/adviser/AdviserDashboard';
+import ConsultationsScreen from './src/screens/adviser/ConsultationsScreen';
+
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
+const screenOptions = { headerShown: false };
+const tabOptions = {
+  tabBarStyle: { backgroundColor: '#1a1a2e', borderTopColor: '#2a2a4e', paddingBottom: 5 },
+  tabBarActiveTintColor: '#6366f1',
+  tabBarInactiveTintColor: '#a8b2d8',
+  headerShown: false,
+};
+
+const ExporterStack = () => (
+  <Stack.Navigator screenOptions={screenOptions}>
+    <Stack.Screen name="ExporterDashboardMain" component={ExporterDashboard} />
+    <Stack.Screen name="CreateShipment" component={CreateShipmentScreen} />
+    <Stack.Screen name="PreShipment" component={PreShipmentScreen} />
+    <Stack.Screen name="PostShipment" component={PostShipmentScreen} />
+  </Stack.Navigator>
+);
+
+const ExporterTabs = () => (
+  <Tab.Navigator screenOptions={tabOptions}>
+    <Tab.Screen name="Dashboard" component={ExporterStack} options={{ tabBarLabel: 'Dashboard', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🏠</Text> }} />
+    <Tab.Screen name="Shipments" component={ShipmentsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>📦</Text> }} />
+    <Tab.Screen name="Buyers" component={BuyersScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👥</Text> }} />
+    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👤</Text> }} />
+  </Tab.Navigator>
+);
+
+const FarmerTabs = () => (
+  <Tab.Navigator screenOptions={tabOptions}>
+    <Tab.Screen name="Dashboard" component={FarmerDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🏠</Text> }} />
+    <Tab.Screen name="Products" component={ProductsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🌾</Text> }} />
+    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👤</Text> }} />
+  </Tab.Navigator>
+);
+
+const CHATabs = () => (
+  <Tab.Navigator screenOptions={tabOptions}>
+    <Tab.Screen name="Dashboard" component={CHADashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🏠</Text> }} />
+    <Tab.Screen name="Customs" component={CustomsClearanceScreen} options={{ tabBarLabel: 'Customs', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🛃</Text> }} />
+    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👤</Text> }} />
+  </Tab.Navigator>
+);
+
+const ForwarderTabs = () => (
+  <Tab.Navigator screenOptions={tabOptions}>
+    <Tab.Screen name="Dashboard" component={ForwarderDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🏠</Text> }} />
+    <Tab.Screen name="Shipments" component={ForwarderShipmentsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🚢</Text> }} />
+    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👤</Text> }} />
+  </Tab.Navigator>
+);
+
+const AdviserTabs = () => (
+  <Tab.Navigator screenOptions={tabOptions}>
+    <Tab.Screen name="Dashboard" component={AdviserDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🏠</Text> }} />
+    <Tab.Screen name="Consultations" component={ConsultationsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>💼</Text> }} />
+    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👤</Text> }} />
+  </Tab.Navigator>
+);
+
+const BeginnerTabs = () => (
+  <Tab.Navigator screenOptions={tabOptions}>
+    <Tab.Screen name="Dashboard" component={ExporterDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🌱</Text> }} />
+    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👤</Text> }} />
+  </Tab.Navigator>
+);
+
+const AppNavigator = () => {
+  const { isAuthenticated, role, isLoading } = useAuth();
+  if (isLoading) return <LoadingScreen />;
+
+  if (isAuthenticated) {
+    if (role === 'exporter') return <ExporterTabs />;
+    if (role === 'farmer') return <FarmerTabs />;
+    if (role === 'cha') return <CHATabs />;
+    if (role === 'forwarder') return <ForwarderTabs />;
+    if (role === 'adviser') return <AdviserTabs />;
+    return <BeginnerTabs />;
+  }
+
+  return (
+    <Stack.Navigator screenOptions={screenOptions}>
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
+    </Stack.Navigator>
+  );
+};
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <AuthProvider>
+      <NavigationContainer>
+        <StatusBar style="light" />
+        <AppNavigator />
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
