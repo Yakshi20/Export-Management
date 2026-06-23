@@ -30,7 +30,7 @@ export default function RegisterPage() {
     if (form.password !== form.confirmPassword) { setError('Passwords do not match'); return; }
     setLoading(true); setError('');
     try {
-      await api.post(`/${role}/register`, form);
+      await api.post(`/${role}/register`, { ...form, role });
       navigate(`/${role}/login`);
     } catch (err) { setError(err.response?.data?.message || 'Registration failed'); }
     setLoading(false);
