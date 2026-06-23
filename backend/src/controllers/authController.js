@@ -1,55 +1,19 @@
 import bcrypt from "bcryptjs";
 import { successResponse } from "../utils/response.js";
 import generateToken from "../utils/generateToken.js";
-import { otpStore } from "../utils/tempStore.js";
+// import { otpStore } from "../utils/tempStore.js"; // OTP disabled
 import User from "../models/user.js";
 
-// Send OTP
+// OTP functions disabled - not needed
+// export const sendOtp = ...
+// export const verifyOtp = ...
+
 export const sendOtp = (req, res) => {
-  const { email } = req.body;
-
-  const otp = Math.floor(
-    100000 + Math.random() * 900000
-  ).toString();
-
-  otpStore[email] = {otp,expiresAt: Date.now()+10*30*1000,};
-
-  successResponse(res, "OTP Sent", {
-    otp,
-  });
+  res.status(410).json({ success: false, message: "OTP not in use" });
 };
 
-// Verify OTP
 export const verifyOtp = (req, res) => {
-  const { email, otp } = req.body;
-
-  const storedOtp = otpStore[email];
-
-  if (!storedOtp) {
-    return res.status(400).json({
-      success: false,
-      message: "OTP not found",
-    });
-  }
-
-  if (Date.now() > storedOtp.expiresAt) {
-    delete otpStore[email];
-
-    return res.status(400).json({
-      success: false,
-      message: "OTP expired",
-    });
-  }
-
-  if (storedOtp.otp !== otp) {
-    return res.status(400).json({
-      success: false,
-      message: "Invalid OTP",
-    });
-  }
-  otpStore[`${email}_verified`] = true;
-  delete otpStore[email];
-  successResponse(res, "OTP Verified");
+  res.status(410).json({ success: false, message: "OTP not in use" });
 };
 // Register User
 export const register = async (req, res) => {
@@ -65,12 +29,14 @@ export const register = async (req, res) => {
       customBrokerLicense,
       portCode,
       mtoLicenseNumber,
-
       farmerName,
       farmLocation,
       farmSize,
       cropType,
       aadhaarNumber,
+      name,
+      specialization,
+      yearsOfExperience,
     } = req.body;
 
     if (role === "exporter") {
@@ -116,13 +82,6 @@ if (role === "farmer") {
   }
 }
 
-    if (!otpStore[`${email}_verified`]) {
-      return res.status(400).json({
-        success: false,
-        message: "Please verify OTP first",
-      });
-    }
-
     const existingUser = await User.findOne({
       $or: [{ email }, { mobile }],
     });
@@ -150,6 +109,14 @@ if (role === "farmer") {
       customBrokerLicense,
       portCode,
       mtoLicenseNumber,
+      farmerName,
+      farmLocation,
+      farmSize,
+      cropType,
+      aadhaarNumber,
+      name,
+      specialization,
+      yearsOfExperience,
       isVerified: true,
     });
 
