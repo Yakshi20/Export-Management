@@ -116,12 +116,8 @@ if (role === "farmer") {
   }
 }
 
-    if (!otpStore[`${email}_verified`]) {
-      return res.status(400).json({
-        success: false,
-        message: "Please verify OTP first",
-      });
-    }
+    // OTP verification removed — direct registration
+    // if (!otpStore[`${email}_verified`]) { ... }
 
     const existingUser = await User.findOne({
       $or: [{ email }, { mobile }],
