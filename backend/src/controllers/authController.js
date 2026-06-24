@@ -1,20 +1,8 @@
 import bcrypt from "bcryptjs";
 import { successResponse } from "../utils/response.js";
 import generateToken from "../utils/generateToken.js";
-// import { otpStore } from "../utils/tempStore.js"; // OTP disabled
 import User from "../models/user.js";
 
-// OTP functions disabled - not needed
-// export const sendOtp = ...
-// export const verifyOtp = ...
-
-export const sendOtp = (req, res) => {
-  res.status(410).json({ success: false, message: "OTP not in use" });
-};
-
-export const verifyOtp = (req, res) => {
-  res.status(410).json({ success: false, message: "OTP not in use" });
-};
 // Register User
 export const register = async (req, res) => {
   try {
@@ -39,64 +27,32 @@ export const register = async (req, res) => {
       yearsOfExperience,
     } = req.body;
 
-    if (role === "exporter") {
-    if (!companyName || !iecCode || !gstNumber) {
-    return res.status(400).json({
-      success: false,
-      message:
-        "Company Name, IEC Code and GST Number are required",
-        });
-      }
-    }
-    
-    if (role === "cha") {
-    if (!customBrokerLicense || !portCode) {
-    return res.status(400).json({
-      success: false,
-      message:
-        "Custom Broker License and Port Code are required",
-        });
-      }
+    if (!email || !mobile || !password) {
+      return res.status(400).json({ success: false, message: "Email, mobile and password are required" });
     }
 
-    if (role === "forwarder") {
-    if (!mtoLicenseNumber) {
-    return res.status(400).json({
-      success: false,
-      message: "MTO License Number is required",
-      });
-      }
+    if (role === "exporter" && (!companyName || !iecCode || !gstNumber)) {
+      return res.status(400).json({ success: false, message: "Company Name, IEC Code and GST Number are required" });
     }
-if (role === "farmer") {
-  if (
-    !farmerName ||
-    !aadhaarNumber ||
-    !farmLocation ||
-    !cropType
-  ) {
-    return res.status(400).json({
-      success: false,
-      message:
-        "Farmer Name, Aadhaar Number, Farm Location and Crop Type are required",
-    });
-  }
-}
 
-    const existingUser = await User.findOne({
-      $or: [{ email }, { mobile }],
-    });
+    if (role === "cha" && (!customBrokerLicense || !portCode)) {
+      return res.status(400).json({ success: false, message: "Custom Broker License and Port Code are required" });
+    }
 
+    if (role === "forwarder" && !mtoLicenseNumber) {
+      return res.status(400).json({ success: false, message: "MTO License Number is required" });
+    }
+
+    if (role === "farmer" && (!farmerName || !aadhaarNumber || !farmLocation || !cropType)) {
+      return res.status(400).json({ success: false, message: "Farmer Name, Aadhaar Number, Farm Location and Crop Type are required" });
+    }
+
+    const existingUser = await User.findOne({ $or: [{ email }, { mobile }] });
     if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        message: "User already exists",
-      });
+      return res.status(400).json({ success: false, message: "User already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(
-      password,
-      10
-    );
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       role,
@@ -125,13 +81,9 @@ if (role === "farmer") {
       role: user.role,
       email: user.email,
       mobile: user.mobile,
-      isVerified: user.isVerified,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -140,34 +92,14 @@ export const login = async (req, res) => {
   try {
     const { email, mobile, password } = req.body;
 
-    const user = await User.findOne({
-      $or: [{ email }, { mobile }],
-    });
-
+    const user = await User.findOne({ $or: [{ email }, { mobile }] });
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "No account found",
-      });
+      return res.status(404).json({ success: false, message: "No account found" });
     }
 
-    if (!user.isVerified) {
-      return res.status(401).json({
-        success: false,
-        message: "Account not verified",
-      });
-    }
-
-    const isMatch = await bcrypt.compare(
-      password,
-      user.password
-    );
-
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid password",
-      });
+      return res.status(401).json({ success: false, message: "Invalid password" });
     }
 
     const token = generateToken(user._id);
@@ -179,195 +111,60 @@ export const login = async (req, res) => {
         role: user.role,
         email: user.email,
         mobile: user.mobile,
-        isVerified: user.isVerified,
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// Profile
+// Get Profile
 export const profile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
-
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
+      return res.status(404).json({ success: false, message: "User not found" });
     }
-
     successResponse(res, "Profile fetched", user);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-//update profile
+// Update Profile
 export const updateProfile = async (req, res) => {
   try {
     const { mobile } = req.body;
-
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      { mobile },
-      { new: true }
-    ).select("-password");
-
-    successResponse(
-      res,
-      "Profile updated successfully",
-      user
-    );
+    const user = await User.findByIdAndUpdate(req.user.id, { mobile }, { new: true }).select("-password");
+    successResponse(res, "Profile updated successfully", user);
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-//change password
+// Change Password
 export const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
-
     const user = await User.findById(req.user.id);
 
-    const isMatch = await bcrypt.compare(
-      currentPassword,
-      user.password
-    );
-
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
-      return res.status(400).json({
-        success: false,
-        message: "Current password is incorrect",
-      });
+      return res.status(400).json({ success: false, message: "Current password is incorrect" });
     }
 
-    const hashedPassword = await bcrypt.hash(
-      newPassword,
-      10
-    );
-
-    user.password = hashedPassword;
-
+    user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
-    successResponse(
-      res,
-      "Password changed successfully"
-    );
+    successResponse(res, "Password changed successfully");
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
-//forgotPassword
-export const forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "No account found",
-      });
-    }
-
-    const otp = Math.floor(
-      100000 + Math.random() * 900000
-    ).toString();
-
-    otpStore[email] = otp;
-
-    successResponse(
-      res,
-      "Password reset OTP sent",
-      { otp }
-    );
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-//reserPasswordsss
-export const resetPassword = async (req, res) => {
-  try {
-    const { email, otp, newPassword } = req.body;
-
-    if (otpStore[email] !== otp) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid OTP",
-      });
-    }
-
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "No account found",
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(
-      newPassword,
-      10
-    );
-
-    user.password = hashedPassword;
-
-    await user.save();
-
-    delete otpStore[email];
-
-    successResponse(
-      res,
-      "Password reset successful"
-    );
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-//resend otp
-export const resendOtp = (req, res) => {
-  const { email } = req.body;
-
-  const otp = Math.floor(
-    100000 + Math.random() * 900000
-  ).toString();
-
-  otpStore[email] = {
-  otp,
-  expiresAt: Date.now() + 5 * 60 * 1000,
-  };
-
-  successResponse(
-    res,
-    "OTP Resent Successfully",
-    { otp }
-  );
-};
+// Placeholder exports so old route imports don't break
+export const sendOtp = (req, res) => res.status(410).json({ success: false, message: "OTP not in use" });
+export const verifyOtp = (req, res) => res.status(410).json({ success: false, message: "OTP not in use" });
+export const resendOtp = (req, res) => res.status(410).json({ success: false, message: "OTP not in use" });
+export const forgotPassword = (req, res) => res.status(410).json({ success: false, message: "Not implemented" });
+export const resetPassword = (req, res) => res.status(410).json({ success: false, message: "Not implemented" });
