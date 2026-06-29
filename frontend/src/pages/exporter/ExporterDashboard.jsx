@@ -13,7 +13,8 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { useAuth } from '../../context/AuthContext';
 
 const links = [
-  { label: 'Docs', path: '/exporter/docs', icon: '🗂️', end: true },
+  { label: 'Home', path: '/exporter/dashboard', icon: '🏠', end: true },
+  { label: 'Docs', path: '/exporter/docs', icon: '🗂️' },
   { label: 'Shipments', path: '/exporter/shipments', icon: '📦' },
   { label: 'Buyers', path: '/exporter/buyers', icon: '👥' },
 ];
@@ -35,12 +36,13 @@ function ExporterHome() {
   const docStatuses = JSON.parse(localStorage.getItem('userDocStatuses') || '{}');
   const pendingDocs = Object.values(docStatuses).filter(s => s === '⏳ Pending' || s === '❌ Missing').length;
   const activeShipments = shipments.filter(s => !['Delivered'].includes(s.status)).length;
-  const revenue = shipments.filter(s => s.status === 'Delivered').length * 0;
+  const revenue = shipments.reduce((sum, s) => sum + (s.shipmentValue || 0), 0);
+  const revenueLabel = revenue >= 1000 ? `$${(revenue / 1000).toFixed(1)}K` : `$${revenue}`;
 
   const stats = [
     { label: 'Total Buyers', value: buyers.length, icon: '👥', color: 'text-purple-400', path: '/exporter/buyers' },
     { label: 'Active Shipments', value: activeShipments, icon: '🚢', color: 'text-yellow-400', path: '/exporter/shipments' },
-    { label: 'Delivered', value: shipments.filter(s => s.status === 'Delivered').length, icon: '✅', color: 'text-green-400', path: '/exporter/shipments' },
+    { label: 'Revenue (USD)', value: revenueLabel, icon: '💰', color: 'text-green-400', path: '/exporter/shipments' },
     { label: 'Pending Docs', value: pendingDocs, icon: '📋', color: pendingDocs > 0 ? 'text-red-400' : 'text-gray-400', path: '/exporter/docs' },
   ];
 

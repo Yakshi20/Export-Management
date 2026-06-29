@@ -101,6 +101,17 @@ const shipmentSchema = new mongoose.Schema(
       type: String,
     },
 
+    shipmentValue: {
+      type: Number,
+      default: 0,
+    },
+
+    shippingMethod: {
+      type: String,
+      enum: ['Air', 'Sea', 'Road', 'Rail'],
+      default: 'Sea',
+    },
+
     shippingBillVerified: {
       type: Boolean,
       default: false,

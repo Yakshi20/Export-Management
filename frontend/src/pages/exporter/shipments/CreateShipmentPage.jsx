@@ -8,7 +8,7 @@ import Toast from '../../../components/ui/Toast';
 
 export default function CreateShipmentPage() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ shipmentNumber: '', productName: '', hsnCode: '', quantity: '', unit: '', originCountry: '', destinationCountry: '', portOfLoading: '', portOfDischarge: '', expectedShipmentDate: '' });
+  const [form, setForm] = useState({ shipmentNumber: '', productName: '', hsnCode: '', quantity: '', unit: '', originCountry: '', destinationCountry: '', portOfLoading: '', portOfDischarge: '', expectedShipmentDate: '', shipmentValue: '', shippingMethod: 'Sea' });
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
 
@@ -44,6 +44,14 @@ export default function CreateShipmentPage() {
             <Input label="Port of Loading" value={form.portOfLoading} onChange={e => set('portOfLoading', e.target.value)} />
             <Input label="Port of Discharge" value={form.portOfDischarge} onChange={e => set('portOfDischarge', e.target.value)} />
             <Input label="Expected Shipment Date" type="date" value={form.expectedShipmentDate} onChange={e => set('expectedShipmentDate', e.target.value)} />
+            <Input label="Shipment Value (USD)" type="number" value={form.shipmentValue} onChange={e => set('shipmentValue', e.target.value)} placeholder="e.g. 5000" />
+            <div>
+              <label className="text-sm text-[#a8b2d8] font-medium block mb-1">Shipping Method</label>
+              <select value={form.shippingMethod} onChange={e => set('shippingMethod', e.target.value)}
+                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+                {['Sea', 'Air', 'Road', 'Rail'].map(m => <option key={m}>{m}</option>)}
+              </select>
+            </div>
           </div>
           <div className="flex gap-3 pt-2">
             <Button type="submit" loading={loading}>Create Shipment</Button>
