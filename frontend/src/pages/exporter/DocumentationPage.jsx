@@ -8,7 +8,7 @@ const PRODUCTS = [
 ];
 
 const COUNTRIES = [
-  'United States', 'United Kingdom', 'United Arab Emirates', 'Saudi Arabia', 'Germany',
+  'India', 'United States', 'United Kingdom', 'United Arab Emirates', 'Saudi Arabia', 'Germany',
   'France', 'Netherlands', 'Canada', 'Australia', 'Japan', 'China', 'Singapore',
   'Malaysia', 'Bangladesh', 'Sri Lanka', 'Nepal', 'Pakistan', 'South Africa',
   'Kenya', 'Nigeria', 'Egypt', 'Qatar', 'Kuwait', 'Bahrain', 'Oman',
