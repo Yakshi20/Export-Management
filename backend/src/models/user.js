@@ -11,13 +11,11 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
     },
 
     mobile: {
       type: String,
       required: true,
-      unique: true,
     },
 
     password: {
@@ -59,5 +57,8 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Same email can register under different roles, but not the same role twice
+userSchema.index({ email: 1, role: 1 }, { unique: true });
 
 export default mongoose.model("User", userSchema);
