@@ -13,11 +13,9 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { useAuth } from '../../context/AuthContext';
 
 const links = [
-  { label: 'Home', path: '/exporter/dashboard', icon: '🏠', end: true },
+  { label: 'Docs', path: '/exporter/docs', icon: '📄', end: true },
   { label: 'Shipments', path: '/exporter/shipments', icon: '📦' },
   { label: 'Buyers', path: '/exporter/buyers', icon: '👥' },
-  { label: 'Docs', path: '/exporter/docs', icon: '📄' },
-  { label: 'Profile', path: '/exporter/profile', icon: '👤' },
 ];
 
 function ExporterHome() {
