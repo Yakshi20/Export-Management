@@ -20,7 +20,7 @@ export default function LoginPage() {
     setError('');
     try {
       const res = await api.post(`/${role}/login`, { ...form, role });
-      login(res.data.token, res.data.user);
+      login(res.data.data.token, res.data.data.user);
       navigate(`/${role}/dashboard`);
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
