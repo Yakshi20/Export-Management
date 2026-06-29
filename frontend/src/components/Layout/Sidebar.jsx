@@ -22,6 +22,9 @@ export default function Sidebar({ links }) {
   const displayName = user?.name || user?.companyName || user?.farmerName || emailName || 'User';
   const initial = photo ? null : displayName[0]?.toUpperCase() || 'U';
 
+  // Which field to update for this role
+  const nameField = role === 'exporter' ? 'companyName' : role === 'farmer' ? 'farmerName' : 'name';
+
   const handleLogout = () => { logout(); navigate('/'); };
 
   const showMsg = (text, type = 'success') => {
@@ -42,14 +45,16 @@ export default function Sidebar({ links }) {
     if (!newName.trim()) return;
     setSaving(true);
     try {
-      await api.put(`/${role}/profile`, { name: newName.trim() });
-      const updated = { ...user, name: newName.trim() };
+      await api.put(`/${role}/profile`, { [nameField]: newName.trim() });
+      const updated = { ...user, [nameField]: newName.trim(), name: newName.trim() };
       login(localStorage.getItem('token'), updated);
       setNewName('');
       showMsg('Name updated!');
       const res = await api.get(`/${role}/profile`);
       setProfileData(res.data?.data || res.data);
-    } catch { showMsg('Failed to update name', 'error'); }
+    } catch (e) {
+      showMsg(e?.response?.data?.message || 'Failed to update name', 'error');
+    }
     setSaving(false);
   };
 
