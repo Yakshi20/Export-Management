@@ -7,44 +7,39 @@ export default function Sidebar({ links }) {
   const navigate = useNavigate();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const fullName = user?.companyName || user?.name || user?.farmerName || user?.email?.split('@')[0] || 'User';
-  const firstName = fullName.split(' ')[0];
-  const initial = firstName[0].toUpperCase();
+  const emailName = user?.email?.split('@')[0] || '';
+  const fullName = user?.companyName || user?.name || user?.farmerName || emailName || 'User';
+  const displayName = emailName || fullName.split(' ')[0];
+  const initial = displayName[0]?.toUpperCase() || 'U';
 
   const handleLogout = () => { logout(); navigate('/'); };
 
   return (
     <>
       {/* Top header */}
-      <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-center px-4 py-3 bg-[#16213e] border-b border-white/10 relative">
-        <button onClick={() => setDrawerOpen(true)} className="flex items-center gap-3 hover:opacity-80 transition-opacity mx-auto">
-          <div className="w-9 h-9 rounded-full bg-[#6366f1] flex items-center justify-center text-white font-bold text-base flex-shrink-0">
-            {initial}
-          </div>
-          <div className="text-left">
-            <p className="text-[#a8b2d8] text-xs leading-none mb-0.5">Hello,</p>
-            <p className="text-white text-sm font-semibold">{user?.email?.split('@')[0] || firstName}</p>
-          </div>
+      <header className="fixed top-0 left-0 right-0 z-30 flex items-center px-4 py-3 bg-[#16213e] border-b border-white/10">
+        {/* Left: avatar only — opens drawer */}
+        <button onClick={() => setDrawerOpen(true)} className="w-9 h-9 rounded-full bg-[#6366f1] flex items-center justify-center text-white font-bold text-base flex-shrink-0 hover:opacity-80 transition-opacity">
+          {initial}
         </button>
-        <div className="absolute right-4 flex items-center gap-1">
+
+        {/* Center: Hello + name */}
+        <div className="flex-1 text-center">
+          <p className="text-white text-sm font-semibold">Hello, {displayName}</p>
+        </div>
+
+        {/* Right: app name */}
+        <div className="flex items-center gap-1 flex-shrink-0">
           <span className="text-sm font-bold text-white">Export</span>
           <span className="text-sm font-bold text-[#e94560]">Pro</span>
         </div>
       </header>
 
-      {/* Profile Drawer */}
-      {/* Backdrop */}
-      <div
-        onClick={() => setDrawerOpen(false)}
-        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 ${drawerOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
-      />
-      {/* Drawer panel */}
+      {/* Drawer — no dark backdrop */}
       <div className={`fixed top-0 left-0 z-50 h-full w-72 bg-[#16213e] border-r border-white/10 shadow-2xl transition-transform duration-300 ${drawerOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex flex-col h-full p-6">
-          {/* Close button */}
           <button onClick={() => setDrawerOpen(false)} className="self-end text-[#a8b2d8] hover:text-white text-xl mb-6">✕</button>
 
-          {/* Avatar + name */}
           <div className="flex flex-col items-center gap-3 mb-8">
             <div className="w-16 h-16 rounded-full bg-[#6366f1] flex items-center justify-center text-white font-bold text-2xl">
               {initial}
@@ -56,7 +51,6 @@ export default function Sidebar({ links }) {
             </div>
           </div>
 
-          {/* User details */}
           <div className="flex-1 space-y-3 overflow-y-auto">
             {user && Object.entries(user)
               .filter(([k]) => !['password', '__v', '_id', 'token', 'role', 'email'].includes(k))
@@ -68,7 +62,6 @@ export default function Sidebar({ links }) {
               ))}
           </div>
 
-          {/* Logout */}
           <button
             onClick={handleLogout}
             className="mt-6 w-full py-3 rounded-xl bg-red-500/10 border border-red-400/30 text-red-400 font-semibold text-sm hover:bg-red-500/20 transition-all"
