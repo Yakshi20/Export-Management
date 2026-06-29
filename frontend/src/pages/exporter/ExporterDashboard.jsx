@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import Card from '../../components/ui/Card';
@@ -12,19 +12,17 @@ import api from '../../api/axios';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const links = [
-  { label: 'Dashboard', path: '/exporter/dashboard', icon: '🏠' },
-  { label: 'All Shipments', path: '/exporter/shipments', icon: '📦' },
-  { label: 'Create Shipment', path: '/exporter/shipments/create', icon: '➕' },
-  { label: 'Pre-Shipment', path: '/exporter/pre-shipment', icon: '📋' },
-  { label: 'Post-Shipment', path: '/exporter/post-shipment', icon: '📮' },
+  { label: 'Home', path: '/exporter/dashboard', icon: '🏠', end: true },
+  { label: 'Shipments', path: '/exporter/shipments', icon: '📦' },
   { label: 'Buyers', path: '/exporter/buyers', icon: '👥' },
-  { label: 'Profile', path: '/exporter/profile', icon: '👤' },
+  { label: 'CHA', path: '/exporter/pre-shipment', icon: '🛃' },
+  { label: 'Adviser', path: '/exporter/post-shipment', icon: '💼' },
 ];
 
 function ExporterHome() {
   const [shipments, setShipments] = useState([]);
   const [loading, setLoading] = useState(true);
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const navigate = useNavigate();
 
   useEffect(() => {
     api.get('/exporter/shipments').then(r => setShipments(r.data || [])).catch(() => {}).finally(() => setLoading(false));
@@ -39,18 +37,42 @@ function ExporterHome() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-white">Welcome, {user.companyName || user.email?.split('@')[0]}!</h1>
       {loading ? <LoadingSpinner /> : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {stats.map(stat => (
             <Card key={stat.label} className="text-center">
-              <div className="text-3xl mb-2">{stat.icon}</div>
-              <div className={`text-3xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
-              <div className="text-[#a8b2d8] text-sm">{stat.label}</div>
+              <div className="text-2xl mb-1">{stat.icon}</div>
+              <div className={`text-2xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
+              <div className="text-[#a8b2d8] text-xs">{stat.label}</div>
             </Card>
           ))}
         </div>
       )}
+
+      {/* Shipment Management */}
+      <p className="text-[#a8b2d8] text-xs font-semibold uppercase tracking-widest">Shipment Management</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <button onClick={() => navigate('/exporter/pre-shipment')} className="text-left w-full">
+          <Card className="flex items-center gap-4 hover:border-[#6366f1]/50 transition-all cursor-pointer">
+            <span className="text-3xl">🚢</span>
+            <div>
+              <p className="text-white font-bold text-base">Pre-Shipment</p>
+              <p className="text-[#a8b2d8] text-sm">Compliance check, documents, quotation</p>
+            </div>
+            <span className="ml-auto text-[#6366f1] text-2xl">›</span>
+          </Card>
+        </button>
+        <button onClick={() => navigate('/exporter/post-shipment')} className="text-left w-full">
+          <Card className="flex items-center gap-4 hover:border-[#6366f1]/50 transition-all cursor-pointer">
+            <span className="text-3xl">📊</span>
+            <div>
+              <p className="text-white font-bold text-base">Post-Shipment</p>
+              <p className="text-[#a8b2d8] text-sm">Track shipment, LC, currency rates</p>
+            </div>
+            <span className="ml-auto text-[#6366f1] text-2xl">›</span>
+          </Card>
+        </button>
+      </div>
     </div>
   );
 }
