@@ -111,6 +111,9 @@ export const login = async (req, res) => {
         role: user.role,
         email: user.email,
         mobile: user.mobile,
+        name: user.name || user.companyName || user.farmerName || user.email?.split('@')[0],
+        companyName: user.companyName,
+        farmerName: user.farmerName,
       },
     });
   } catch (error) {

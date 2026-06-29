@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/axios';
@@ -10,20 +10,17 @@ export default function Sidebar({ links }) {
   const [tab, setTab] = useState('profile');
   const [msg, setMsg] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [profileData, setProfileData] = useState(null);
 
-  // Name update
   const [newName, setNewName] = useState('');
-  // Password update
   const [pw, setPw] = useState({ current: '', next: '', confirm: '' });
-  // Photo
   const [photo, setPhoto] = useState(user?.photo || null);
   const fileRef = useRef();
 
-  const emailName = user?.email?.split('@')[0] || '';
-  const fullName = user?.name || user?.companyName || user?.farmerName || emailName || 'User';
-  const displayName = user?.name || emailName || fullName.split(' ')[0];
-  const initial = photo ? null : displayName[0]?.toUpperCase() || 'U';
   const role = user?.role || 'exporter';
+  const emailName = user?.email?.split('@')[0] || '';
+  const displayName = user?.name || user?.companyName || user?.farmerName || emailName || 'User';
+  const initial = photo ? null : displayName[0]?.toUpperCase() || 'U';
 
   const handleLogout = () => { logout(); navigate('/'); };
 
@@ -32,15 +29,26 @@ export default function Sidebar({ links }) {
     setTimeout(() => setMsg(null), 3000);
   };
 
+  const openDrawer = async () => {
+    setDrawerOpen(true);
+    setTab('profile');
+    try {
+      const res = await api.get(`/${role}/profile`);
+      setProfileData(res.data?.data || res.data);
+    } catch {}
+  };
+
   const saveName = async () => {
     if (!newName.trim()) return;
     setSaving(true);
     try {
-      const res = await api.put(`/${role}/profile`, { name: newName.trim() });
+      await api.put(`/${role}/profile`, { name: newName.trim() });
       const updated = { ...user, name: newName.trim() };
       login(localStorage.getItem('token'), updated);
       setNewName('');
       showMsg('Name updated!');
+      const res = await api.get(`/${role}/profile`);
+      setProfileData(res.data?.data || res.data);
     } catch { showMsg('Failed to update name', 'error'); }
     setSaving(false);
   };
@@ -70,8 +78,13 @@ export default function Sidebar({ links }) {
     reader.readAsDataURL(file);
   };
 
+  const skipKeys = ['password', '__v', '_id', 'token', 'photo', 'productAvailability'];
+  const profileEntries = profileData
+    ? Object.entries(profileData).filter(([k, v]) => !skipKeys.includes(k) && v !== null && v !== undefined && String(v).trim() !== '')
+    : [];
+
   const tabs = [
-    { id: 'profile', label: '👤 Profile' },
+    { id: 'profile', label: '👤 Info' },
     { id: 'name', label: '✏️ Name' },
     { id: 'password', label: '🔒 Password' },
   ];
@@ -80,7 +93,7 @@ export default function Sidebar({ links }) {
     <>
       {/* Top header */}
       <header className="fixed top-0 left-0 right-0 z-30 flex items-center px-4 py-3 bg-[#16213e] border-b border-white/10">
-        <button onClick={() => { setDrawerOpen(true); setTab('profile'); }} className="w-9 h-9 rounded-full bg-[#6366f1] flex items-center justify-center text-white font-bold text-base flex-shrink-0 hover:opacity-80 transition-opacity overflow-hidden">
+        <button onClick={openDrawer} className="w-9 h-9 rounded-full bg-[#6366f1] flex items-center justify-center text-white font-bold text-base flex-shrink-0 hover:opacity-80 transition-opacity overflow-hidden">
           {photo ? <img src={photo} alt="avatar" className="w-full h-full object-cover" /> : initial}
         </button>
         <div className="flex-1 text-center">
@@ -94,14 +107,13 @@ export default function Sidebar({ links }) {
 
       {/* Drawer */}
       <div className={`fixed top-0 left-0 z-50 h-full w-72 bg-[#16213e] border-r border-white/10 shadow-2xl transition-transform duration-300 flex flex-col ${drawerOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        {/* Drawer header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
           <p className="text-white font-bold text-base">My Profile</p>
           <button onClick={() => setDrawerOpen(false)} className="text-[#a8b2d8] hover:text-white text-lg">✕</button>
         </div>
 
         {/* Avatar + info */}
-        <div className="flex flex-col items-center gap-2 pt-6 pb-4 px-5">
+        <div className="flex flex-col items-center gap-2 pt-5 pb-4 px-5">
           <button onClick={() => fileRef.current.click()} className="relative group">
             <div className="w-16 h-16 rounded-full bg-[#6366f1] flex items-center justify-center text-white font-bold text-2xl overflow-hidden">
               {photo ? <img src={photo} alt="avatar" className="w-full h-full object-cover" /> : initial}
@@ -111,7 +123,7 @@ export default function Sidebar({ links }) {
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
           <p className="text-white font-bold text-sm">{displayName}</p>
           <p className="text-[#a8b2d8] text-xs">{user?.email}</p>
-          {user?.role && <span className="text-[#6366f1] text-xs capitalize bg-[#6366f1]/10 px-2 py-0.5 rounded-full">{user.role}</span>}
+          {role && <span className="text-[#6366f1] text-xs capitalize bg-[#6366f1]/10 px-2 py-0.5 rounded-full">{role}</span>}
         </div>
 
         {/* Tabs */}
@@ -137,14 +149,13 @@ export default function Sidebar({ links }) {
 
           {tab === 'profile' && (
             <div className="space-y-3">
-              {user && Object.entries(user)
-                .filter(([k]) => !['password', '__v', '_id', 'token', 'photo'].includes(k))
-                .map(([k, v]) => (
-                  <div key={k} className="flex justify-between border-b border-white/10 pb-2">
-                    <span className="text-[#a8b2d8] text-xs capitalize">{k.replace(/([A-Z])/g, ' $1')}</span>
-                    <span className="text-white text-xs font-medium text-right max-w-[130px] truncate">{String(v)}</span>
-                  </div>
-                ))}
+              {profileEntries.length === 0 && <p className="text-[#a8b2d8] text-xs">Loading...</p>}
+              {profileEntries.map(([k, v]) => (
+                <div key={k} className="flex justify-between border-b border-white/10 pb-2">
+                  <span className="text-[#a8b2d8] text-xs capitalize">{k.replace(/([A-Z])/g, ' $1')}</span>
+                  <span className="text-white text-xs font-medium text-right max-w-[130px] truncate">{String(v)}</span>
+                </div>
+              ))}
             </div>
           )}
 
@@ -196,7 +207,6 @@ export default function Sidebar({ links }) {
           )}
         </div>
 
-        {/* Logout */}
         <div className="px-5 pb-6">
           <button
             onClick={handleLogout}
