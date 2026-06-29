@@ -36,7 +36,7 @@ export default function CreateShipmentPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input label="Shipment Number" value={form.shipmentNumber} onChange={e => set('shipmentNumber', e.target.value)} required />
             <Input label="Product Name" value={form.productName} onChange={e => set('productName', e.target.value)} required />
-            <Input label="HSN Code" value={form.hsnCode} onChange={e => set('hsnCode', e.target.value)} />
+            <Input label="IEC Code" value={form.hsnCode} onChange={e => set('hsnCode', e.target.value)} />
             <Input label="Quantity" type="number" value={form.quantity} onChange={e => set('quantity', e.target.value)} required />
             <Input label="Unit" value={form.unit} onChange={e => set('unit', e.target.value)} placeholder="KG, MT, PCS" />
             <Input label="Origin Country" value={form.originCountry} onChange={e => set('originCountry', e.target.value)} required />
