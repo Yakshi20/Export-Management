@@ -2,37 +2,21 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 export default function Sidebar({ links }) {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-  const name = user?.companyName || user?.name || user?.farmerName || user?.email?.split('@')[0] || 'User';
-  const initial = name[0].toUpperCase();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
+  const { user } = useAuth();
+  const fullName = user?.companyName || user?.name || user?.farmerName || user?.email?.split('@')[0] || 'User';
+  const firstName = fullName.split(' ')[0];
+  const initial = firstName[0].toUpperCase();
 
   return (
     <>
       {/* Top header */}
-      <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3 bg-[#16213e] border-b border-white/10">
-        {/* Left: avatar + user name */}
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-[#6366f1] flex items-center justify-center text-white font-bold text-base flex-shrink-0">
-            {initial}
-          </div>
-          <div>
-            <p className="text-[#a8b2d8] text-xs leading-none mb-0.5">Welcome back,</p>
-            <p className="text-white text-sm font-semibold truncate max-w-[180px]">{name}</p>
-          </div>
+      <header className="fixed top-0 left-0 right-0 z-30 flex items-center gap-3 px-4 py-3 bg-[#16213e] border-b border-white/10">
+        <div className="w-9 h-9 rounded-full bg-[#6366f1] flex items-center justify-center text-white font-bold text-base flex-shrink-0">
+          {initial}
         </div>
-        {/* Right: logout */}
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-red-400 hover:bg-red-500/10 transition-all text-sm font-medium border border-red-400/20"
-        >
-          🚪 <span className="hidden sm:inline">Logout</span>
-        </button>
+        <div>
+          <p className="text-white text-sm font-semibold">Hello, {firstName}</p>
+        </div>
       </header>
 
       {/* Bottom navigation bar */}
