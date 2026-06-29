@@ -26,10 +26,12 @@ function ExporterHome() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.all([
-      api.get('/exporter/shipments').then(r => setShipments(r.data?.data || r.data || [])),
-      api.get('/exporter/buyers').then(r => setBuyers(r.data?.data || r.data || [])),
-    ]).finally(() => setLoading(false));
+    const load = async () => {
+      try { const r = await api.get('/exporter/shipments'); setShipments(r.data?.data || r.data || []); } catch {}
+      try { const r = await api.get('/exporter/buyers'); setBuyers(r.data?.data || r.data || []); } catch {}
+      setLoading(false);
+    };
+    load();
   }, []);
 
   const userDocs = JSON.parse(localStorage.getItem('userDocs') || '{}');
@@ -149,7 +151,8 @@ export default function ExporterDashboard() {
   return (
     <DashboardLayout links={links}>
       <Routes>
-        <Route path="/" element={<ExporterHome />} />
+        <Route index element={<ExporterHome />} />
+        <Route path="dashboard" element={<ExporterHome />} />
         <Route path="/shipments" element={<ShipmentsListPage />} />
         <Route path="/shipments/create" element={<CreateShipmentPage />} />
         <Route path="/pre-shipment" element={<PreShipmentPage />} />
