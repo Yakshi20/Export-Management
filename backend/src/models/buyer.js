@@ -9,7 +9,6 @@ const buyerSchema = new mongoose.Schema(
 
     companyName: {
       type: String,
-      required: true,
     },
 
     email: {
@@ -29,7 +28,6 @@ const buyerSchema = new mongoose.Schema(
 
     address: {
       type: String,
-      required: true,
     },
 
     exporterId: {
