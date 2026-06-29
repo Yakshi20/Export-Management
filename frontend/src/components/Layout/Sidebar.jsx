@@ -16,17 +16,17 @@ export default function Sidebar({ links }) {
   return (
     <>
       {/* Top header */}
-      <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3 bg-[#16213e] border-b border-white/10">
-        <button onClick={() => setDrawerOpen(true)} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+      <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-center px-4 py-3 bg-[#16213e] border-b border-white/10 relative">
+        <button onClick={() => setDrawerOpen(true)} className="flex items-center gap-3 hover:opacity-80 transition-opacity mx-auto">
           <div className="w-9 h-9 rounded-full bg-[#6366f1] flex items-center justify-center text-white font-bold text-base flex-shrink-0">
             {initial}
           </div>
           <div className="text-left">
             <p className="text-[#a8b2d8] text-xs leading-none mb-0.5">Hello,</p>
-            <p className="text-white text-sm font-semibold">{firstName}</p>
+            <p className="text-white text-sm font-semibold">{user?.email?.split('@')[0] || firstName}</p>
           </div>
         </button>
-        <div className="flex items-center gap-1">
+        <div className="absolute right-4 flex items-center gap-1">
           <span className="text-sm font-bold text-white">Export</span>
           <span className="text-sm font-bold text-[#e94560]">Pro</span>
         </div>
