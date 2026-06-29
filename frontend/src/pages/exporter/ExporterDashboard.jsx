@@ -20,56 +20,81 @@ const links = [
 
 function ExporterHome() {
   const [shipments, setShipments] = useState([]);
+  const [buyers, setBuyers] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get('/exporter/shipments').then(r => setShipments(r.data || [])).catch(() => {}).finally(() => setLoading(false));
+    Promise.all([
+      api.get('/exporter/shipments').then(r => setShipments(r.data?.data || r.data || [])),
+      api.get('/exporter/buyers').then(r => setBuyers(r.data?.data || r.data || [])),
+    ]).finally(() => setLoading(false));
   }, []);
 
+  const userDocs = JSON.parse(localStorage.getItem('userDocs') || '{}');
+  const docStatuses = JSON.parse(localStorage.getItem('userDocStatuses') || '{}');
+  const pendingDocs = Object.values(docStatuses).filter(s => s === '⏳ Pending' || s === '❌ Missing').length;
+  const activeShipments = shipments.filter(s => !['Delivered'].includes(s.status)).length;
+  const revenue = shipments.filter(s => s.status === 'Delivered').length * 0;
+
   const stats = [
-    { label: 'Total Shipments', value: shipments.length, icon: '📦', color: 'text-blue-400' },
-    { label: 'In Transit', value: shipments.filter(s => s.status === 'In Transit').length, icon: '✈️', color: 'text-yellow-400' },
-    { label: 'Delivered', value: shipments.filter(s => s.status === 'Delivered').length, icon: '✅', color: 'text-green-400' },
-    { label: 'Created', value: shipments.filter(s => s.status === 'Created').length, icon: '🆕', color: 'text-gray-400' },
+    { label: 'Total Buyers', value: buyers.length, icon: '👥', color: 'text-purple-400', path: '/exporter/buyers' },
+    { label: 'Active Shipments', value: activeShipments, icon: '🚢', color: 'text-yellow-400', path: '/exporter/shipments' },
+    { label: 'Delivered', value: shipments.filter(s => s.status === 'Delivered').length, icon: '✅', color: 'text-green-400', path: '/exporter/shipments' },
+    { label: 'Pending Docs', value: pendingDocs, icon: '📋', color: pendingDocs > 0 ? 'text-red-400' : 'text-gray-400', path: '/exporter/docs' },
   ];
 
+  const alerts = [
+    pendingDocs > 0 && { type: 'warn', msg: `${pendingDocs} document(s) pending or missing` },
+    !userDocs.iec && { type: 'warn', msg: 'IEC Code not added — required for all exports' },
+    buyers.length === 0 && { type: 'info', msg: 'No buyers added yet — start by adding a buyer' },
+  ].filter(Boolean);
+
   return (
-    <div className="space-y-6">
-      {loading ? <LoadingSpinner /> : (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div className="space-y-5">
+      {loading ? <LoadingSpinner /> : (<>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {stats.map(stat => (
-            <Card key={stat.label} className="text-center">
-              <div className="text-2xl mb-1">{stat.icon}</div>
-              <div className={`text-2xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
-              <div className="text-[#a8b2d8] text-xs">{stat.label}</div>
-            </Card>
+            <button key={stat.label} onClick={() => navigate(stat.path)} className="text-left">
+              <Card className="text-center hover:border-[#6366f1]/50 transition-all cursor-pointer">
+                <div className="text-2xl mb-1">{stat.icon}</div>
+                <div className={`text-2xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
+                <div className="text-[#a8b2d8] text-xs">{stat.label}</div>
+              </Card>
+            </button>
           ))}
         </div>
-      )}
 
-      <p className="text-[#a8b2d8] text-xs font-semibold uppercase tracking-widest">Shipment Management</p>
+        {alerts.length > 0 && (
+          <div className="space-y-2">
+            {alerts.map((a, i) => (
+              <div key={i} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm ${a.type === 'warn' ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-400/20' : 'bg-blue-500/10 text-blue-400 border border-blue-400/20'}`}>
+                {a.type === 'warn' ? '⚠️' : 'ℹ️'} {a.msg}
+              </div>
+            ))}
+          </div>
+        )}
+      </>)}
+
+      <p className="text-[#a8b2d8] text-xs font-semibold uppercase tracking-widest">Quick Actions</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <button onClick={() => navigate('/exporter/pre-shipment')} className="text-left w-full">
-          <Card className="flex items-center gap-4 hover:border-[#6366f1]/50 transition-all cursor-pointer">
-            <span className="text-3xl">🚢</span>
-            <div>
-              <p className="text-white font-bold text-base">Pre-Shipment</p>
-              <p className="text-[#a8b2d8] text-sm">Compliance check, documents, quotation</p>
-            </div>
-            <span className="ml-auto text-[#6366f1] text-2xl">›</span>
-          </Card>
-        </button>
-        <button onClick={() => navigate('/exporter/post-shipment')} className="text-left w-full">
-          <Card className="flex items-center gap-4 hover:border-[#6366f1]/50 transition-all cursor-pointer">
-            <span className="text-3xl">📊</span>
-            <div>
-              <p className="text-white font-bold text-base">Post-Shipment</p>
-              <p className="text-[#a8b2d8] text-sm">Track shipment, LC, currency rates</p>
-            </div>
-            <span className="ml-auto text-[#6366f1] text-2xl">›</span>
-          </Card>
-        </button>
+        {[
+          { icon: '🚢', title: 'Pre-Shipment', sub: 'Compliance, documents, quotation', path: '/exporter/pre-shipment' },
+          { icon: '📊', title: 'Post-Shipment', sub: 'Track shipment, LC, currency rates', path: '/exporter/post-shipment' },
+          { icon: '👥', title: 'Add Buyer', sub: 'Manage your buyer relationships', path: '/exporter/buyers' },
+          { icon: '📦', title: 'Create Shipment', sub: 'Start a new export shipment', path: '/exporter/shipments/create' },
+        ].map(item => (
+          <button key={item.title} onClick={() => navigate(item.path)} className="text-left w-full">
+            <Card className="flex items-center gap-4 hover:border-[#6366f1]/50 transition-all cursor-pointer">
+              <span className="text-2xl">{item.icon}</span>
+              <div>
+                <p className="text-white font-bold text-sm">{item.title}</p>
+                <p className="text-[#a8b2d8] text-xs">{item.sub}</p>
+              </div>
+              <span className="ml-auto text-[#6366f1] text-xl">›</span>
+            </Card>
+          </button>
+        ))}
       </div>
     </div>
   );
