@@ -33,7 +33,11 @@ export default function BuyersPage() {
       await api.post('/exporter/buyers', form);
       setToast({ message: 'Buyer added!', type: 'success' });
       setAddModal(false); setForm(emptyBuyer); fetchBuyers();
-    } catch { setToast({ message: 'Failed to add buyer', type: 'error' }); }
+    } catch(e) {
+      const msg = e?.response?.data?.message || e?.response?.data?.error || e?.message || 'Failed to add buyer';
+      setToast({ message: msg, type: 'error' });
+      console.error('Add buyer error:', e?.response?.data, e?.response?.status);
+    }
     setSaving(false);
   };
 
