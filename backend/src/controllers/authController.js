@@ -47,9 +47,9 @@ export const register = async (req, res) => {
       return res.status(400).json({ success: false, message: "Farmer Name, Aadhaar Number, Farm Location and Crop Type are required" });
     }
 
-    const existingUser = await User.findOne({ $or: [{ email }, { mobile }] });
+    const existingUser = await User.findOne({ email, role });
     if (existingUser) {
-      return res.status(400).json({ success: false, message: "User already exists" });
+      return res.status(400).json({ success: false, message: `Already registered as ${role}. Please login.` });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -90,11 +90,11 @@ export const register = async (req, res) => {
 // Login User
 export const login = async (req, res) => {
   try {
-    const { email, mobile, password } = req.body;
+    const { email, mobile, password, role } = req.body;
 
-    const user = await User.findOne({ $or: [{ email }, { mobile }] });
+    const user = await User.findOne({ $or: [{ email, role }, { mobile, role }] });
     if (!user) {
-      return res.status(404).json({ success: false, message: "No account found" });
+      return res.status(404).json({ success: false, message: `No ${role} account found with this email` });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);

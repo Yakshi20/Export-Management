@@ -19,7 +19,7 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     try {
-      const res = await api.post(`/${role}/login`, form);
+      const res = await api.post(`/${role}/login`, { ...form, role });
       login(res.data.token, res.data.user);
       navigate(`/${role}/dashboard`);
     } catch (err) {
