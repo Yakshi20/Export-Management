@@ -21,7 +21,7 @@ export default function BuyersPage() {
   const navigate = useNavigate();
 
   const fetchBuyers = useCallback(() => {
-    api.get('/exporter/buyers').then(r => setBuyers(r.data || [])).catch(() => {}).finally(() => setLoading(false));
+    api.get('/exporter/buyers').then(r => setBuyers(r.data?.data || r.data || [])).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
   useEffect(() => { fetchBuyers(); }, [fetchBuyers]);
