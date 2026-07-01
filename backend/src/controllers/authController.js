@@ -111,6 +111,9 @@ export const login = async (req, res) => {
         role: user.role,
         email: user.email,
         mobile: user.mobile,
+        name: user.name || user.companyName || user.farmerName || user.email?.split('@')[0],
+        companyName: user.companyName,
+        farmerName: user.farmerName,
       },
     });
   } catch (error) {
@@ -134,8 +137,13 @@ export const profile = async (req, res) => {
 // Update Profile
 export const updateProfile = async (req, res) => {
   try {
-    const { mobile } = req.body;
-    const user = await User.findByIdAndUpdate(req.user.id, { mobile }, { new: true }).select("-password");
+    const { mobile, name, companyName, farmerName } = req.body;
+    const updates = {};
+    if (mobile !== undefined) updates.mobile = mobile;
+    if (name !== undefined) updates.name = name;
+    if (companyName !== undefined) updates.companyName = companyName;
+    if (farmerName !== undefined) updates.farmerName = farmerName;
+    const user = await User.findByIdAndUpdate(req.user.id, updates, { new: true }).select("-password");
     successResponse(res, "Profile updated successfully", user);
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

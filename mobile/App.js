@@ -35,67 +35,113 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const screenOptions = { headerShown: false };
+
 const tabOptions = {
-  tabBarStyle: { backgroundColor: '#1a1a2e', borderTopColor: '#2a2a4e', paddingBottom: 5 },
+  tabBarStyle: {
+    backgroundColor: '#1a1a2e',
+    borderTopColor: '#2a2a4e',
+    paddingBottom: 8,
+    paddingTop: 6,
+    height: 64,
+  },
   tabBarActiveTintColor: '#6366f1',
   tabBarInactiveTintColor: '#a8b2d8',
+  tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
   headerShown: false,
 };
 
-const ExporterStack = () => (
+// Exporter Stack - handles screens that push on top of tabs
+const ExporterHomeStack = () => (
   <Stack.Navigator screenOptions={screenOptions}>
-    <Stack.Screen name="ExporterDashboardMain" component={ExporterDashboard} />
+    <Stack.Screen name="ExporterHome" component={ExporterDashboard} />
+    <Stack.Screen name="PreShipment" component={PreShipmentScreen} />
+    <Stack.Screen name="PostShipment" component={PostShipmentScreen} />
+  </Stack.Navigator>
+);
+
+const ExporterShipmentsStack = () => (
+  <Stack.Navigator screenOptions={screenOptions}>
+    <Stack.Screen name="ShipmentsList" component={ShipmentsScreen} />
     <Stack.Screen name="CreateShipment" component={CreateShipmentScreen} />
     <Stack.Screen name="PreShipment" component={PreShipmentScreen} />
     <Stack.Screen name="PostShipment" component={PostShipmentScreen} />
   </Stack.Navigator>
 );
 
+const ExporterBuyersStack = () => (
+  <Stack.Navigator screenOptions={screenOptions}>
+    <Stack.Screen name="BuyersList" component={BuyersScreen} />
+    <Stack.Screen name="CreateShipment" component={CreateShipmentScreen} />
+  </Stack.Navigator>
+);
+
+// Exporter bottom tabs
 const ExporterTabs = () => (
   <Tab.Navigator screenOptions={tabOptions}>
-    <Tab.Screen name="Dashboard" component={ExporterStack} options={{ tabBarLabel: 'Dashboard', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🏠</Text> }} />
-    <Tab.Screen name="Shipments" component={ShipmentsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>📦</Text> }} />
-    <Tab.Screen name="Buyers" component={BuyersScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👥</Text> }} />
-    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👤</Text> }} />
+    <Tab.Screen
+      name="Home"
+      component={ExporterHomeStack}
+      options={{ tabBarLabel: 'Home', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text> }}
+    />
+    <Tab.Screen
+      name="Shipments"
+      component={ExporterShipmentsStack}
+      options={{ tabBarLabel: 'Shipments', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>📦</Text> }}
+    />
+    <Tab.Screen
+      name="Buyers"
+      component={ExporterBuyersStack}
+      options={{ tabBarLabel: 'Buyers', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>👥</Text> }}
+    />
+    <Tab.Screen
+      name="CHA"
+      component={CustomsClearanceScreen}
+      options={{ tabBarLabel: 'CHA', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🛃</Text> }}
+    />
+    <Tab.Screen
+      name="Adviser"
+      component={ConsultationsScreen}
+      options={{ tabBarLabel: 'Adviser', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>💼</Text> }}
+    />
   </Tab.Navigator>
 );
 
 const FarmerTabs = () => (
   <Tab.Navigator screenOptions={tabOptions}>
-    <Tab.Screen name="Dashboard" component={FarmerDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🏠</Text> }} />
-    <Tab.Screen name="Products" component={ProductsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🌾</Text> }} />
-    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👤</Text> }} />
+    <Tab.Screen name="Dashboard" component={FarmerDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text> }} />
+    <Tab.Screen name="Products" component={ProductsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🌾</Text> }} />
+    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>👤</Text> }} />
   </Tab.Navigator>
 );
 
 const CHATabs = () => (
   <Tab.Navigator screenOptions={tabOptions}>
-    <Tab.Screen name="Dashboard" component={CHADashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🏠</Text> }} />
-    <Tab.Screen name="Customs" component={CustomsClearanceScreen} options={{ tabBarLabel: 'Customs', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🛃</Text> }} />
-    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👤</Text> }} />
+    <Tab.Screen name="Dashboard" component={CHADashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text> }} />
+    <Tab.Screen name="Customs" component={CustomsClearanceScreen} options={{ tabBarLabel: 'Customs', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🛃</Text> }} />
+    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>👤</Text> }} />
   </Tab.Navigator>
 );
 
 const ForwarderTabs = () => (
   <Tab.Navigator screenOptions={tabOptions}>
-    <Tab.Screen name="Dashboard" component={ForwarderDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🏠</Text> }} />
-    <Tab.Screen name="Shipments" component={ForwarderShipmentsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🚢</Text> }} />
-    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👤</Text> }} />
+    <Tab.Screen name="Dashboard" component={ForwarderDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text> }} />
+    <Tab.Screen name="Shipments" component={ForwarderShipmentsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🚢</Text> }} />
+    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>👤</Text> }} />
   </Tab.Navigator>
 );
 
 const AdviserTabs = () => (
   <Tab.Navigator screenOptions={tabOptions}>
-    <Tab.Screen name="Dashboard" component={AdviserDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🏠</Text> }} />
-    <Tab.Screen name="Consultations" component={ConsultationsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>💼</Text> }} />
-    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👤</Text> }} />
+    <Tab.Screen name="Dashboard" component={AdviserDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text> }} />
+    <Tab.Screen name="Consultations" component={ConsultationsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>💼</Text> }} />
+    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>👤</Text> }} />
   </Tab.Navigator>
 );
 
 const BeginnerTabs = () => (
   <Tab.Navigator screenOptions={tabOptions}>
-    <Tab.Screen name="Dashboard" component={ExporterDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>🌱</Text> }} />
-    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 18 }}>👤</Text> }} />
+    <Tab.Screen name="Dashboard" component={ExporterDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🌱</Text> }} />
+    <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>👤</Text> }} />
   </Tab.Navigator>
 );
 

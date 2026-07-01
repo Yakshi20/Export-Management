@@ -1,17 +1,18 @@
 import mongoose from "mongoose";
 
-const buyerSchema = new mongoose.Schema(
+const chaAgentSchema = new mongoose.Schema(
   {
-    buyerName: {
+    chaName: {
       type: String,
       required: true,
     },
 
-    companyName: {
+    licenseNumber: {
       type: String,
+      required: true,
     },
 
-    email: {
+    port: {
       type: String,
       required: true,
     },
@@ -21,12 +22,17 @@ const buyerSchema = new mongoose.Schema(
       required: true,
     },
 
-    country: {
+    email: {
       type: String,
-      required: true,
     },
 
-    address: {
+    specialization: {
+      type: String,
+      enum: ["Air", "Sea", "Both"],
+      default: "Sea",
+    },
+
+    customsCharges: {
       type: String,
     },
 
@@ -41,4 +47,4 @@ const buyerSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Buyer", buyerSchema);
+export default mongoose.model("ChaAgent", chaAgentSchema);
