@@ -18,6 +18,7 @@ const links = [
   { label: 'Docs', path: '/exporter/docs', icon: '🗂️' },
   { label: 'Shipments', path: '/exporter/shipments', icon: '📦' },
   { label: 'Buyers', path: '/exporter/buyers', icon: '👥' },
+  { label: 'Chat', path: '/exporter/chat', icon: '💬' },
 ];
 
 function ExporterHome() {
@@ -161,6 +162,7 @@ export default function ExporterDashboard() {
         <Route path="/buyers" element={<BuyersPage />} />
         <Route path="/docs" element={<DocumentationPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/chat" element={<ChatPage userRole="exporter" />} />
       </Routes>
     </DashboardLayout>
   );

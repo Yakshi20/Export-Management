@@ -1,8 +1,8 @@
-import ChatPage from '../chat/ChatPage';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import Card from '../../components/ui/Card';
+import ChatPage from '../chat/ChatPage';
 import api from '../../api/axios';
 
 const links = [
@@ -10,8 +10,8 @@ const links = [
   { label: 'Bookings', path: '/adviser/bookings', icon: '📅' },
   { label: 'Services', path: '/adviser/services', icon: '💼' },
   { label: 'Earnings', path: '/adviser/earnings', icon: '💰' },
-  { label: 'Chat', path: '/adviser/chat', icon: '💬' },
   { label: 'Docs', path: '/adviser/docs', icon: '📋' },
+  { label: 'Chat', path: '/adviser/chat', icon: '💬' },
 ];
 
 function AdviserHome() {
@@ -100,20 +100,20 @@ function BookingsPage() {
   const [saving, setSaving] = useState({});
   const [msg, setMsg] = useState(null);
 
-  const fetchData = () => {
+  const fetch = () => {
     api.get('/adviser/consultations').then(r => {
       setConsultations(r.data?.data || r.data || []);
     }).catch(() => {}).finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetch(); }, []);
 
   const update = async (id, data) => {
     setSaving(s => ({ ...s, [id]: true }));
     try {
       await api.put(`/adviser/consultations/${id}`, data);
       setMsg({ text: 'Updated!', type: 'success' });
-      fetchData();
+      fetch();
     } catch { setMsg({ text: 'Failed to update', type: 'error' }); }
     setSaving(s => ({ ...s, [id]: false }));
     setTimeout(() => setMsg(null), 3000);
@@ -150,10 +150,16 @@ function BookingsPage() {
                 <span className={`text-xs px-2 py-1 rounded-full font-semibold flex-shrink-0 ${STATUS_COLOR[c.status || 'Pending']}`}>{c.status || 'Pending'}</span>
               </div>
               <div className="flex gap-2 flex-wrap items-center border-t border-white/5 pt-3">
-                <select defaultValue={c.status || 'Pending'} onChange={e => update(c._id, { status: e.target.value })} disabled={saving[c._id]} className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-[#6366f1]">
+                <select
+                  defaultValue={c.status || 'Pending'}
+                  onChange={e => update(c._id, { status: e.target.value })}
+                  disabled={saving[c._id]}
+                  className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-[#6366f1]"
+                >
                   {['Pending', 'Confirmed', 'Completed', 'Cancelled'].map(s => <option key={s} value={s} className="bg-[#16213e]">{s}</option>)}
                 </select>
-                <input type="date" onChange={e => update(c._id, { scheduledDate: e.target.value })} className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-[#6366f1]" />
+                <input type="date" onChange={e => update(c._id, { scheduledDate: e.target.value })}
+                  className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-[#6366f1]" />
                 {c.scheduledDate && <span className="text-green-400 text-xs">📅 {new Date(c.scheduledDate).toLocaleDateString()}</span>}
               </div>
             </Card>
@@ -192,7 +198,12 @@ function ServicesPage() {
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
                 <span className="text-[#a8b2d8] text-sm">₹</span>
-                <input type="number" value={rates[s.key]} onChange={e => setRates(r => ({ ...r, [s.key]: e.target.value }))} className="w-20 bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-white text-sm focus:outline-none focus:border-[#6366f1] text-right" />
+                <input
+                  type="number"
+                  value={rates[s.key]}
+                  onChange={e => setRates(r => ({ ...r, [s.key]: e.target.value }))}
+                  className="w-20 bg-white/5 border border-white/10 rounded-lg px-2 py-1.5 text-white text-sm focus:outline-none focus:border-[#6366f1] text-right"
+                />
               </div>
             </div>
             <div className="flex justify-between mt-2 text-xs text-[#a8b2d8] border-t border-white/5 pt-2">
@@ -202,7 +213,8 @@ function ServicesPage() {
           </Card>
         ))}
       </div>
-      <button onClick={() => { setSaved(true); setTimeout(() => setSaved(false), 2000); }} className="w-full py-3 rounded-xl bg-[#6366f1] text-white font-bold hover:bg-[#5254cc] transition-all">
+      <button onClick={() => { setSaved(true); setTimeout(() => setSaved(false), 2000); }}
+        className="w-full py-3 rounded-xl bg-[#6366f1] text-white font-bold hover:bg-[#5254cc] transition-all">
         {saved ? '✅ Rates Saved!' : 'Save Rates'}
       </button>
     </div>
@@ -311,8 +323,8 @@ export default function AdviserDashboard() {
         <Route path="bookings" element={<BookingsPage />} />
         <Route path="services" element={<ServicesPage />} />
         <Route path="earnings" element={<EarningsPage />} />
-        <Route path="chat" element={<ChatPage userRole="adviser" />} />
         <Route path="docs" element={<DocsPage />} />
+        <Route path="chat" element={<ChatPage userRole="adviser" />} />
       </Routes>
     </DashboardLayout>
   );
