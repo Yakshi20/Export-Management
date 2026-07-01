@@ -2,4 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 * { font-family: 'Inter', sans-serif; }
-body { background-color: #1a1a2e; color: #ffffff; }
+body { background-color: #1a1a2e; color: #ffffff; transition: background-color 0.3s, color 0.3s; }
+
+html.light-theme body { background-color: #f0f4ff; color: #1a1a2e; }
+html.light-theme .bg-\[\#1a1a2e\] { background-color: #f0f4ff !important; }
+html.light-theme .bg-\[\#16213e\] { background-color: #e8eeff !important; }
+html.light-theme .bg-\[\#0f0f23\] { background-color: #e0e8ff !important; }
+html.light-theme .bg-white\/5 { background-color: rgba(99,102,241,0.06) !important; }
+html.light-theme .bg-white\/10 { background-color: rgba(99,102,241,0.1) !important; }
+html.light-theme .border-white\/10 { border-color: rgba(99,102,241,0.2) !important; }
+html.light-theme .border-white\/5 { border-color: rgba(99,102,241,0.12) !important; }
+html.light-theme .text-white { color: #1a1a2e !important; }
+html.light-theme .text-\[\#a8b2d8\] { color: #4a5280 !important; }
+html.light-theme .min-h-screen { background-color: #f0f4ff; }

@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import api from '../../api/axios';
-import Card from '../../components/ui/Card';
-import Input from '../../components/ui/Input';
-import Button from '../../components/ui/Button';
 
 export default function LoginPage() {
   const { role } = useParams();
   const { login } = useAuth();
+  const { applyUserTheme } = useTheme();
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
@@ -16,11 +15,11 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
+    setLoading(true); setError('');
     try {
       const res = await api.post(`/${role}/login`, { ...form, role });
       login(res.data.data.token, res.data.data.user);
+      applyUserTheme(form.email);
       navigate(`/${role}/dashboard`);
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
@@ -29,30 +28,45 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1a1a2e] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#f0f4ff] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="text-3xl font-bold text-white">Export<span className="text-[#e94560]">Pro</span></Link>
+          <Link to="/" className="text-3xl font-bold text-[#1a1a2e]">Export<span className="text-[#6366f1]">Pro</span></Link>
+          <p className="text-[#4a5280] text-sm mt-2">India's Export Management Platform</p>
         </div>
-        <Card>
+        <div className="bg-white rounded-2xl shadow-xl border border-[#e0e4f0] p-8">
           <div className="flex items-center gap-2 mb-6">
-            <span className="bg-[#e94560]/20 text-[#e94560] border border-[#e94560]/30 px-3 py-1 rounded-full text-sm font-medium capitalize">{role}</span>
-            <span className="text-[#a8b2d8] text-sm">Login</span>
+            <span className="bg-[#6366f1]/10 text-[#6366f1] border border-[#6366f1]/20 px-3 py-1 rounded-full text-sm font-semibold capitalize">{role}</span>
+            <span className="text-[#4a5280] text-sm">Login</span>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-6">Welcome back</h1>
-          {error && <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg px-4 py-3 mb-4 text-sm">{error}</div>}
+          <h1 className="text-2xl font-bold text-[#1a1a2e] mb-1">Welcome back 👋</h1>
+          <p className="text-[#4a5280] text-sm mb-6">Sign in to your account</p>
+          {error && <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 mb-4 text-sm">{error}</div>}
           <form onSubmit={handleSubmit} className="space-y-4">
-            <Input label="Email" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} placeholder="your@email.com" required />
-            <Input label="Password" type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} placeholder="••••••••" required />
-            <Button type="submit" loading={loading} className="w-full">Sign In</Button>
+            <div>
+              <label className="text-sm font-medium text-[#1a1a2e] mb-1 block">Email</label>
+              <input type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
+                placeholder="your@email.com" required
+                className="w-full border border-[#d0d5ee] rounded-xl px-4 py-2.5 text-[#1a1a2e] placeholder-[#9099c0] focus:outline-none focus:border-[#6366f1] focus:ring-2 focus:ring-[#6366f1]/10 transition-all bg-white text-sm" />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-[#1a1a2e] mb-1 block">Password</label>
+              <input type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })}
+                placeholder="••••••••" required
+                className="w-full border border-[#d0d5ee] rounded-xl px-4 py-2.5 text-[#1a1a2e] placeholder-[#9099c0] focus:outline-none focus:border-[#6366f1] focus:ring-2 focus:ring-[#6366f1]/10 transition-all bg-white text-sm" />
+            </div>
+            <button type="submit" disabled={loading}
+              className="w-full py-3 bg-[#6366f1] text-white font-bold rounded-xl hover:bg-[#5254cc] transition-all disabled:opacity-60 mt-2">
+              {loading ? 'Signing in...' : 'Sign In'}
+            </button>
           </form>
-          <p className="text-center text-[#a8b2d8] text-sm mt-4">
-            Don't have an account? <Link to={`/${role}/register`} className="text-[#e94560] hover:underline">Register</Link>
+          <p className="text-center text-[#4a5280] text-sm mt-5">
+            Don't have an account? <Link to={`/${role}/register`} className="text-[#6366f1] font-semibold hover:underline">Register</Link>
           </p>
-          <p className="text-center mt-2">
-            <Link to="/" className="text-[#a8b2d8] text-sm hover:text-white">← Back to home</Link>
+          <p className="text-center mt-3">
+            <Link to="/" className="text-[#9099c0] text-sm hover:text-[#6366f1]">← Back to home</Link>
           </p>
-        </Card>
+        </div>
       </div>
     </div>
   );

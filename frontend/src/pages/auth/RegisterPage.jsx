@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../../api/axios';
-import Card from '../../components/ui/Card';
-import Input from '../../components/ui/Input';
-import Button from '../../components/ui/Button';
 
 const roleFields = {
   exporter: [{ name: 'companyName', label: 'Company Name' }, { name: 'iecCode', label: 'IEC Code' }, { name: 'gstNumber', label: 'GST Number' }],
@@ -21,10 +18,6 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // OTP flow commented out — using direct registration instead
-  // const sendOtp = async (e) => { ... api.post(`/${role}/send-otp`) ... }
-  // const verifyOtp = async (e) => { ... api.post(`/${role}/verify-otp`) ... }
-
   const register = async (e) => {
     e.preventDefault();
     if (form.password !== form.confirmPassword) { setError('Passwords do not match'); return; }
@@ -36,35 +29,48 @@ export default function RegisterPage() {
     setLoading(false);
   };
 
-  const extraFields = roleFields[role] || [];
+  const ic = "w-full border border-[#d0d5ee] rounded-xl px-4 py-2.5 text-[#1a1a2e] placeholder-[#9099c0] focus:outline-none focus:border-[#6366f1] focus:ring-2 focus:ring-[#6366f1]/10 transition-all bg-white text-sm";
 
   return (
-    <div className="min-h-screen bg-[#1a1a2e] flex items-center justify-center px-4 py-10">
+    <div className="min-h-screen bg-[#f0f4ff] flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/" className="text-3xl font-bold text-white">Export<span className="text-[#e94560]">Pro</span></Link>
+          <Link to="/" className="text-3xl font-bold text-[#1a1a2e]">Export<span className="text-[#6366f1]">Pro</span></Link>
+          <p className="text-[#4a5280] text-sm mt-2">India's Export Management Platform</p>
         </div>
-        <Card>
+        <div className="bg-white rounded-2xl shadow-xl border border-[#e0e4f0] p-8">
           <div className="flex items-center gap-2 mb-6">
-            <span className="bg-[#e94560]/20 text-[#e94560] border border-[#e94560]/30 px-3 py-1 rounded-full text-sm font-medium capitalize">{role}</span>
-            <span className="text-[#a8b2d8] text-sm">Register</span>
+            <span className="bg-[#6366f1]/10 text-[#6366f1] border border-[#6366f1]/20 px-3 py-1 rounded-full text-sm font-semibold capitalize">{role}</span>
+            <span className="text-[#4a5280] text-sm">Register</span>
           </div>
-          <h2 className="text-xl font-bold text-white mb-4">Create your account</h2>
-          {error && <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-lg px-4 py-3 mb-4 text-sm">{error}</div>}
+          <h2 className="text-2xl font-bold text-[#1a1a2e] mb-1">Create account ✨</h2>
+          <p className="text-[#4a5280] text-sm mb-6">Fill in your details to get started</p>
+          {error && <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 mb-4 text-sm">{error}</div>}
           <form onSubmit={register} className="space-y-4">
-            <Input label="Email" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} placeholder="your@email.com" required />
-            <Input label="Mobile" value={form.mobile} onChange={e => setForm({...form, mobile: e.target.value})} placeholder="+91 9999999999" required />
-            <Input label="Password" type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} required />
-            <Input label="Re-enter Password" type="password" value={form.confirmPassword} onChange={e => setForm({...form, confirmPassword: e.target.value})} required />
-            {extraFields.map(f => (
-              <Input key={f.name} label={f.label} type={f.type || 'text'} value={form[f.name] || ''} onChange={e => setForm({...form, [f.name]: e.target.value})} required />
+            {[['email','Email','email','your@email.com'],['mobile','Mobile','text','+91 9999999999'],['password','Password','password','••••••••'],['confirmPassword','Re-enter Password','password','••••••••']].map(([name,label,type,ph]) => (
+              <div key={name}>
+                <label className="text-sm font-medium text-[#1a1a2e] mb-1 block">{label}</label>
+                <input type={type} value={form[name]||''} onChange={e => setForm({...form,[name]:e.target.value})} placeholder={ph} required className={ic} />
+              </div>
             ))}
-            <Button type="submit" loading={loading} className="w-full">Create Account</Button>
+            {(roleFields[role]||[]).map(f => (
+              <div key={f.name}>
+                <label className="text-sm font-medium text-[#1a1a2e] mb-1 block">{f.label}</label>
+                <input type={f.type||'text'} value={form[f.name]||''} onChange={e => setForm({...form,[f.name]:e.target.value})} required className={ic} />
+              </div>
+            ))}
+            <button type="submit" disabled={loading}
+              className="w-full py-3 bg-[#6366f1] text-white font-bold rounded-xl hover:bg-[#5254cc] transition-all disabled:opacity-60 mt-2">
+              {loading ? 'Creating account...' : 'Create Account'}
+            </button>
           </form>
-          <p className="text-center text-[#a8b2d8] text-sm mt-4">
-            Already have an account? <Link to={`/${role}/login`} className="text-[#e94560] hover:underline">Login</Link>
+          <p className="text-center text-[#4a5280] text-sm mt-5">
+            Already have an account? <Link to={`/${role}/login`} className="text-[#6366f1] font-semibold hover:underline">Login</Link>
           </p>
-        </Card>
+          <p className="text-center mt-3">
+            <Link to="/" className="text-[#9099c0] text-sm hover:text-[#6366f1]">← Back to home</Link>
+          </p>
+        </div>
       </div>
     </div>
   );

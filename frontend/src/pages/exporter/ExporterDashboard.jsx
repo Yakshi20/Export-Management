@@ -1,4 +1,5 @@
 import ChatPage from '../chat/ChatPage';
+import ThemeToggle from '../../components/ui/ThemeToggle';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
@@ -139,6 +140,7 @@ function ProfilePage() {
             ))}
         </div>
       )}
+      <div className="space-y-3"><p className="text-[#a8b2d8] text-xs font-semibold uppercase tracking-widest">Appearance</p><ThemeToggle /></div>
       <button
         onClick={handleLogout}
         className="w-full py-3 rounded-xl bg-red-500/10 border border-red-400/30 text-red-400 font-semibold text-sm hover:bg-red-500/20 transition-all"
