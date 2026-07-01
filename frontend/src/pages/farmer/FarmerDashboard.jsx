@@ -12,6 +12,7 @@ const links = [
   { label: 'Exporters', path: '/farmer/exporters', icon: '🤝' },
   { label: 'Chat', path: '/farmer/chat', icon: '💬' },
   { label: 'Guide', path: '/farmer/guide', icon: '📦' },
+  { label: 'Chat', path: '/farmer/chat', icon: '💬' },
 ];
 
 const MARKET_PRICES = [
@@ -362,6 +363,7 @@ export default function FarmerDashboard() {
         <Route path="exporters" element={<ExportersPage />} />
         <Route path="chat" element={<ChatPage userRole="farmer" />} />
         <Route path="guide" element={<GuidePage />} />
+        <Route path="chat" element={<ChatPage userRole="farmer" />} />
       </Routes>
     </DashboardLayout>
   );

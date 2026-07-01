@@ -12,6 +12,7 @@ const links = [
   { label: 'Documents', path: '/forwarder/documents', icon: '📄' },
   { label: 'Chat', path: '/forwarder/chat', icon: '💬' },
   { label: 'Pickup', path: '/forwarder/pickup', icon: '📅' },
+  { label: 'Chat', path: '/forwarder/chat', icon: '💬' },
 ];
 const STATUSES = ['Pending', 'Picked', 'In Transit', 'Customs', 'Delivered'];
 const STATUS_COLOR = { Pending: 'text-yellow-400 bg-yellow-400/10', Picked: 'text-blue-400 bg-blue-400/10', 'In Transit': 'text-purple-400 bg-purple-400/10', Customs: 'text-orange-400 bg-orange-400/10', Delivered: 'text-green-400 bg-green-400/10' };
@@ -114,6 +115,7 @@ export default function ForwarderDashboard() {
         <Route path="documents" element={<DocumentsPage />} />
         <Route path="chat" element={<ChatPage userRole="forwarder" />} />
         <Route path="pickup" element={<PickupPage />} />
+        <Route path="chat" element={<ChatPage userRole="forwarder" />} />
       </Routes>
     </DashboardLayout>
   );

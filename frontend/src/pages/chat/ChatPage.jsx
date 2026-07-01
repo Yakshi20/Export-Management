@@ -19,8 +19,8 @@ const AI_ANSWERS = {
   tax: 'Export benefits: 1) Zero GST on exports 2) IGST refund within 60 days 3) Duty drawback on inputs 4) MEIS/RoDTEP incentives 5) No customs duty on exports. Consult a CA for maximizing benefits.',
   restriction: 'Restricted exports require special licenses: arms, chemicals, wildlife, some agricultural products. Check DGFT notification list. Most agricultural products need APEDA registration.',
   customs: 'Customs process: File Shipping Bill on ICEGATE → Port examination (if selected) → Let Export Order → Hand over to carrier. Use CHA (Custom House Agent) for hassle-free clearance.',
-  lc: 'Letter of Credit (LC) is safest payment for exports. Buyer\'s bank issues LC → Your bank confirms → Ship goods → Submit documents to bank → Get payment. Always check LC terms before shipping.',
-  incoterms: 'Common Incoterms: FOB (you pay till port, buyer pays freight), CIF (you pay freight+insurance), EXW (buyer collects from your factory), DDP (you deliver to buyer\'s door). FOB is most common for India.',
+  lc: "Letter of Credit (LC) is safest payment for exports. Buyer's bank issues LC → Your bank confirms → Ship goods → Submit documents to bank → Get payment. Always check LC terms before shipping.",
+  incoterms: "Common Incoterms: FOB (you pay till port, buyer pays freight), CIF (you pay freight+insurance), EXW (buyer collects from your factory), DDP (you deliver to buyer's door). FOB is most common for India.",
 };
 
 const ROLE_COLOR = {
@@ -83,22 +83,20 @@ export default function ChatPage({ userRole = 'exporter' }) {
       setTyping(true);
       setTimeout(() => {
         setTyping(false);
-        const replies = ['Got it, thanks!', 'Sure, I\'ll check and get back.', 'Understood. Will update shortly.', 'Thanks for the update!', 'Noted.'];
+        const replies = ["Got it, thanks!", "Sure, I'll check and get back.", 'Understood. Will update shortly.', 'Thanks for the update!', 'Noted.'];
         addMessage(active.id, { id: Date.now(), from: 'them', type: 'text', text: replies[Math.floor(Math.random() * replies.length)], time: new Date().toISOString() });
       }, 1500 + Math.random() * 1000);
     }
   };
 
   const sendDoc = (docType) => {
-    const msg = { id: Date.now(), from: 'me', type: 'doc', text: docType, file: `${docType.replace(/ /g, '_')}.pdf`, time: new Date().toISOString() };
-    addMessage(active.id, msg);
+    addMessage(active.id, { id: Date.now(), from: 'me', type: 'doc', text: docType, file: `${docType.replace(/ /g, '_')}.pdf`, time: new Date().toISOString() });
     setShowDocs(false);
     if (active.id === 'ai') setTimeout(() => addMessage('ai', { id: Date.now(), from: 'them', type: 'text', text: `I've received your ${docType}. I can help verify the details if needed.`, time: new Date().toISOString() }), 1000);
   };
 
   const sendVoice = () => {
-    const dur = (2 + Math.random() * 8).toFixed(1);
-    addMessage(active.id, { id: Date.now(), from: 'me', type: 'voice', duration: `${dur}s`, time: new Date().toISOString() });
+    addMessage(active.id, { id: Date.now(), from: 'me', type: 'voice', duration: `${(2 + Math.random() * 8).toFixed(1)}s`, time: new Date().toISOString() });
   };
 
   const filteredContacts = CONTACTS.filter(c => {
@@ -107,7 +105,6 @@ export default function ChatPage({ userRole = 'exporter' }) {
     return matchSearch && matchRole;
   });
 
-  const activeMessages = chats[active.id] || [];
   const unread = (id) => (chats[id] || []).filter(m => m.from === 'them').length;
 
   return (
@@ -159,10 +156,8 @@ export default function ChatPage({ userRole = 'exporter' }) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => setShowAI(!showAI)}
-              className="text-xs px-3 py-1.5 bg-purple-500/10 text-purple-300 border border-purple-500/20 rounded-lg font-semibold hover:bg-purple-500/20 transition-all">🤖 AI Help</button>
-            <button onClick={() => setTranslate(!translate)}
-              className={`text-xs px-3 py-1.5 rounded-lg font-semibold border transition-all ${translate ? 'bg-[#6366f1] text-white border-[#6366f1]' : 'bg-white/5 text-[#a8b2d8] border-white/10 hover:bg-white/10'}`}>🌐 Translate</button>
+            <button onClick={() => setShowAI(!showAI)} className="text-xs px-3 py-1.5 bg-purple-500/10 text-purple-300 border border-purple-500/20 rounded-lg font-semibold hover:bg-purple-500/20 transition-all">🤖 AI Help</button>
+            <button onClick={() => setTranslate(!translate)} className={`text-xs px-3 py-1.5 rounded-lg font-semibold border transition-all ${translate ? 'bg-[#6366f1] text-white border-[#6366f1]' : 'bg-white/5 text-[#a8b2d8] border-white/10 hover:bg-white/10'}`}>🌐 Translate</button>
           </div>
         </div>
 
@@ -179,9 +174,9 @@ export default function ChatPage({ userRole = 'exporter' }) {
         )}
 
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-          {activeMessages.map(msg => (
+          {(chats[active.id] || []).map(msg => (
             <div key={msg.id} className={`flex ${msg.from === 'me' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-xs lg:max-w-md ${msg.from === 'me' ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
+              <div className={`max-w-xs lg:max-w-md flex flex-col gap-1 ${msg.from === 'me' ? 'items-end' : 'items-start'}`}>
                 {msg.type === 'text' && (
                   <div className={`px-4 py-2 rounded-2xl text-sm ${msg.from === 'me' ? 'bg-[#6366f1] text-white rounded-br-sm' : 'bg-white/10 text-white rounded-bl-sm'}`}>
                     {translate && msg.from === 'them' ? <><span className="text-xs text-[#a8b2d8] block mb-1">🌐 Translated</span>{msg.text}</> : msg.text}
@@ -189,23 +184,12 @@ export default function ChatPage({ userRole = 'exporter' }) {
                 )}
                 {msg.type === 'doc' && (
                   <div className={`px-4 py-2 rounded-2xl ${msg.from === 'me' ? 'bg-[#6366f1]/80 text-white rounded-br-sm' : 'bg-white/10 text-white rounded-bl-sm'}`}>
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">📎</span>
-                      <div><p className="text-xs font-semibold">{msg.text}</p><p className="text-xs opacity-70">{msg.file}</p></div>
-                    </div>
+                    <div className="flex items-center gap-2"><span className="text-lg">📎</span><div><p className="text-xs font-semibold">{msg.text}</p><p className="text-xs opacity-70">{msg.file}</p></div></div>
                   </div>
                 )}
                 {msg.type === 'voice' && (
                   <div className={`px-4 py-2 rounded-2xl ${msg.from === 'me' ? 'bg-[#6366f1]/80 text-white rounded-br-sm' : 'bg-white/10 text-white rounded-bl-sm'}`}>
-                    <div className="flex items-center gap-2">
-                      <span>🎤</span>
-                      <div className="flex gap-0.5 items-center">
-                        {Array.from({ length: 20 }).map((_, i) => (
-                          <div key={i} className="w-0.5 rounded-full bg-current opacity-70" style={{ height: `${4 + Math.random() * 16}px` }}></div>
-                        ))}
-                      </div>
-                      <span className="text-xs opacity-70">{msg.duration}</span>
-                    </div>
+                    <div className="flex items-center gap-2"><span>🎤</span><div className="flex gap-0.5 items-center">{Array.from({ length: 20 }).map((_, i) => <div key={i} className="w-0.5 rounded-full bg-current opacity-70" style={{ height: `${4 + Math.random() * 16}px` }}></div>)}</div><span className="text-xs opacity-70">{msg.duration}</span></div>
                   </div>
                 )}
                 <span className="text-[#a8b2d8] text-xs">{new Date(msg.time).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span>
@@ -215,9 +199,7 @@ export default function ChatPage({ userRole = 'exporter' }) {
           {typing && (
             <div className="flex justify-start">
               <div className="bg-white/10 px-4 py-3 rounded-2xl rounded-bl-sm flex items-center gap-1">
-                {[0, 1, 2].map(i => (
-                  <div key={i} className="w-2 h-2 bg-[#a8b2d8] rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }}></div>
-                ))}
+                {[0,1,2].map(i => <div key={i} className="w-2 h-2 bg-[#a8b2d8] rounded-full animate-bounce" style={{ animationDelay: `${i*0.15}s` }}></div>)}
               </div>
             </div>
           )}
@@ -228,10 +210,7 @@ export default function ChatPage({ userRole = 'exporter' }) {
           <div className="px-4 py-3 border-t border-white/10 bg-white/5">
             <p className="text-[#a8b2d8] text-xs font-semibold mb-2">Select document to share:</p>
             <div className="flex gap-2 flex-wrap">
-              {DOC_TYPES.map(d => (
-                <button key={d} onClick={() => sendDoc(d)}
-                  className="text-xs px-3 py-1.5 bg-[#6366f1]/10 text-[#6366f1] border border-[#6366f1]/20 rounded-lg hover:bg-[#6366f1]/20 transition-all">{d}</button>
-              ))}
+              {DOC_TYPES.map(d => <button key={d} onClick={() => sendDoc(d)} className="text-xs px-3 py-1.5 bg-[#6366f1]/10 text-[#6366f1] border border-[#6366f1]/20 rounded-lg hover:bg-[#6366f1]/20 transition-all">{d}</button>)}
             </div>
           </div>
         )}
@@ -242,11 +221,8 @@ export default function ChatPage({ userRole = 'exporter' }) {
           <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && !e.shiftKey && sendText()}
             placeholder={active.id === 'ai' ? 'Ask the AI assistant...' : `Message ${active.name}...`}
             className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-[#6366f1] placeholder-[#a8b2d8]" />
-          <button onClick={sendText} disabled={!input.trim()}
-            className="p-2.5 bg-[#6366f1] text-white rounded-xl hover:bg-[#5254cc] transition-all disabled:opacity-40 disabled:cursor-not-allowed">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-              <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-            </svg>
+          <button onClick={sendText} disabled={!input.trim()} className="p-2.5 bg-[#6366f1] text-white rounded-xl hover:bg-[#5254cc] transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4"><path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" /></svg>
           </button>
         </div>
       </div>
