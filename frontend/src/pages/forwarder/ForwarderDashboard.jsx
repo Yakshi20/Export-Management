@@ -1,3 +1,4 @@
+import ChatPage from '../chat/ChatPage';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
@@ -9,6 +10,7 @@ const links = [
   { label: 'Shipments', path: '/forwarder/shipments', icon: '🚢' },
   { label: 'Quotes', path: '/forwarder/quotes', icon: '💰' },
   { label: 'Documents', path: '/forwarder/documents', icon: '📄' },
+  { label: 'Chat', path: '/forwarder/chat', icon: '💬' },
   { label: 'Pickup', path: '/forwarder/pickup', icon: '📅' },
 ];
 const STATUSES = ['Pending', 'Picked', 'In Transit', 'Customs', 'Delivered'];
@@ -110,6 +112,7 @@ export default function ForwarderDashboard() {
         <Route path="shipments" element={<ShipmentsPage />} />
         <Route path="quotes" element={<QuotesPage />} />
         <Route path="documents" element={<DocumentsPage />} />
+        <Route path="chat" element={<ChatPage userRole="forwarder" />} />
         <Route path="pickup" element={<PickupPage />} />
       </Routes>
     </DashboardLayout>

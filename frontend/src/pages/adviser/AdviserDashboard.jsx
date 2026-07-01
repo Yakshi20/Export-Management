@@ -1,3 +1,4 @@
+import ChatPage from '../chat/ChatPage';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
@@ -9,6 +10,7 @@ const links = [
   { label: 'Bookings', path: '/adviser/bookings', icon: '📅' },
   { label: 'Services', path: '/adviser/services', icon: '💼' },
   { label: 'Earnings', path: '/adviser/earnings', icon: '💰' },
+  { label: 'Chat', path: '/adviser/chat', icon: '💬' },
   { label: 'Docs', path: '/adviser/docs', icon: '📋' },
 ];
 
@@ -309,6 +311,7 @@ export default function AdviserDashboard() {
         <Route path="bookings" element={<BookingsPage />} />
         <Route path="services" element={<ServicesPage />} />
         <Route path="earnings" element={<EarningsPage />} />
+        <Route path="chat" element={<ChatPage userRole="adviser" />} />
         <Route path="docs" element={<DocsPage />} />
       </Routes>
     </DashboardLayout>

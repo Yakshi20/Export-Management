@@ -1,3 +1,4 @@
+import ChatPage from '../chat/ChatPage';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
@@ -9,6 +10,7 @@ const links = [
   { label: 'My Crops', path: '/farmer/crops', icon: '🌾' },
   { label: 'Market', path: '/farmer/market', icon: '📈' },
   { label: 'Exporters', path: '/farmer/exporters', icon: '🤝' },
+  { label: 'Chat', path: '/farmer/chat', icon: '💬' },
   { label: 'Guide', path: '/farmer/guide', icon: '📦' },
 ];
 
@@ -358,6 +360,7 @@ export default function FarmerDashboard() {
         <Route path="crops" element={<CropsPage />} />
         <Route path="market" element={<MarketPage />} />
         <Route path="exporters" element={<ExportersPage />} />
+        <Route path="chat" element={<ChatPage userRole="farmer" />} />
         <Route path="guide" element={<GuidePage />} />
       </Routes>
     </DashboardLayout>
