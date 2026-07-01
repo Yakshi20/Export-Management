@@ -15,6 +15,8 @@ import exporterAuthRoutes from "./routes/exporter/exporterAuthRoutes.js";
 import preShipmentRoutes from "./routes/exporter/preShipmentRoutes.js";
 import postShipmentRoutes from "./routes/exporter/postShipmentRoutes.js";
 import buyerRoutes from "./routes/exporter/buyerRoutes.js";
+import chaAgentRoutes from "./routes/exporter/chaAgentRoutes.js";
+import shipmentRoutes from "./routes/exporter/shipmentRoutes.js";
 
 // Farmer
 import farmerAuthRoutes from "./routes/farmer/farmerAuthRoutes.js";
@@ -57,6 +59,8 @@ app.use("/api/exporter", exporterAuthRoutes);
 app.use("/api/exporter/pre-shipment", preShipmentRoutes);
 app.use("/api/exporter/post-shipment", postShipmentRoutes);
 app.use("/api/exporter/buyers", buyerRoutes);
+app.use("/api/exporter/cha-agents", chaAgentRoutes);
+app.use("/api/exporter/shipments", shipmentRoutes);
 
 app.use("/api/farmer", farmerAuthRoutes);
 app.use("/api/farmer", farmerProductRoutes);

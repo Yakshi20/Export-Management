@@ -88,6 +88,11 @@ const shipmentSchema = new mongoose.Schema(
       ref: "User",
     },
 
+    chaAgentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ChaAgent",
+    },
+
     letterOfCredit: {
       type: String,
     },
