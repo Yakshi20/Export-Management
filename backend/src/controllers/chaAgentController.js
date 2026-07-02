@@ -13,7 +13,7 @@ export const createChaAgent = async (req, res) => {
       email,
       specialization,
       customsCharges,
-      exporterId: req.user.id,
+      ownerId: req.user.id,
     });
 
     successResponse(res, "CHA added successfully", chaAgent);
@@ -24,7 +24,7 @@ export const createChaAgent = async (req, res) => {
 
 export const getChaAgents = async (req, res) => {
   try {
-    const chaAgents = await ChaAgent.find({ exporterId: req.user.id });
+    const chaAgents = await ChaAgent.find({ ownerId: req.user.id });
     successResponse(res, "CHAs fetched successfully", chaAgents);
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

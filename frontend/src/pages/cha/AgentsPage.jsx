@@ -11,7 +11,7 @@ const PORTS = ['Mumbai Port', 'Chennai Port', 'Mangalore Port'];
 const emptyCha = { chaName: '', licenseNumber: '', port: PORTS[0], phone: '', email: '', specialization: 'Sea', customsCharges: '' };
 const SPEC_COLORS = { Air: 'text-blue-400 bg-blue-400/10', Sea: 'text-cyan-400 bg-cyan-400/10', Both: 'text-purple-400 bg-purple-400/10' };
 
-export default function ChaPage() {
+export default function AgentsPage() {
   const [chas, setChas] = useState([]);
   const [shipments, setShipments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,11 +27,11 @@ export default function ChaPage() {
   const menuRef = useRef();
 
   const fetchChas = useCallback(() => {
-    api.get('/exporter/cha-agents').then(r => setChas(r.data?.data || r.data || [])).catch(() => {}).finally(() => setLoading(false));
+    api.get('/cha/agents').then(r => setChas(r.data?.data || r.data || [])).catch(() => {}).finally(() => setLoading(false));
   }, []);
 
   const fetchShipments = useCallback(() => {
-    api.get('/exporter/shipments').then(r => setShipments(r.data?.data || r.data || [])).catch(() => {});
+    api.get('/cha/shipments').then(r => setShipments(r.data?.data || r.data || [])).catch(() => {});
   }, []);
 
   useEffect(() => { fetchChas(); fetchShipments(); }, [fetchChas, fetchShipments]);
@@ -45,11 +45,11 @@ export default function ChaPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.post('/exporter/cha-agents', form);
-      setToast({ message: 'CHA added!', type: 'success' });
+      await api.post('/cha/agents', form);
+      setToast({ message: 'Agent added!', type: 'success' });
       setAddModal(false); setForm(emptyCha); fetchChas();
     } catch (e) {
-      const msg = e?.response?.data?.message || e?.response?.data?.error || e?.message || 'Failed to add CHA';
+      const msg = e?.response?.data?.message || e?.response?.data?.error || e?.message || 'Failed to add agent';
       setToast({ message: msg, type: 'error' });
     }
     setSaving(false);
@@ -59,26 +59,26 @@ export default function ChaPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.put(`/exporter/cha-agents/${editModal._id}`, form);
-      setToast({ message: 'CHA updated!', type: 'success' });
+      await api.put(`/cha/agents/${editModal._id}`, form);
+      setToast({ message: 'Agent updated!', type: 'success' });
       setEditModal(false); setForm(emptyCha); fetchChas();
-    } catch { setToast({ message: 'Failed to update CHA', type: 'error' }); }
+    } catch { setToast({ message: 'Failed to update agent', type: 'error' }); }
     setSaving(false);
   };
 
   const deleteCha = async (id) => {
-    if (!confirm('Delete this CHA?')) return;
+    if (!confirm('Delete this agent?')) return;
     try {
-      await api.delete(`/exporter/cha-agents/${id}`);
-      setToast({ message: 'CHA deleted', type: 'success' });
+      await api.delete(`/cha/agents/${id}`);
+      setToast({ message: 'Agent deleted', type: 'success' });
       setMenuOpen(null); fetchChas();
     } catch { setToast({ message: 'Failed to delete', type: 'error' }); }
   };
 
   const assignToShipment = async (shipmentId) => {
     try {
-      await api.put(`/exporter/shipments/${shipmentId}`, { chaAgentId: assignModal._id });
-      setToast({ message: 'CHA assigned to shipment!', type: 'success' });
+      await api.put(`/cha/shipments/${shipmentId}/assign-agent`, { chaAgentId: assignModal._id });
+      setToast({ message: 'Agent assigned to shipment!', type: 'success' });
       setAssignModal(null); fetchShipments();
     } catch (e) {
       setToast({ message: e?.response?.data?.message || 'Failed to assign', type: 'error' });
@@ -126,14 +126,14 @@ export default function ChaPage() {
       {toast && <Toast {...toast} onClose={() => setToast(null)} />}
 
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-white">CHA (Customs House Agents)</h1>
-        <Button onClick={() => { setForm(emptyCha); setAddModal(true); }}>+ Add CHA</Button>
+        <h1 className="text-2xl font-bold text-white">My Agents</h1>
+        <Button onClick={() => { setForm(emptyCha); setAddModal(true); }}>+ Add Agent</Button>
       </div>
 
       {chas.length === 0 ? (
         <Card className="text-center py-12">
           <div className="text-4xl mb-3">📑</div>
-          <p className="text-[#a8b2d8]">No CHAs yet. Add your first customs house agent!</p>
+          <p className="text-[#a8b2d8]">No agents yet. Add your first customs agent!</p>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -185,7 +185,7 @@ export default function ChaPage() {
 
       {/* CHA Details Modal */}
       {selectedCha && (
-        <Modal isOpen={!!selectedCha} onClose={() => setSelectedCha(null)} title="CHA Details">
+        <Modal isOpen={!!selectedCha} onClose={() => setSelectedCha(null)} title="Agent Details">
           <div className="flex items-center gap-3 mb-5">
             <div className="w-12 h-12 rounded-full bg-[#6366f1] flex items-center justify-center text-white font-bold text-lg">
               {(selectedCha.chaName || 'C')[0].toUpperCase()}
@@ -213,7 +213,7 @@ export default function ChaPage() {
           </div>
           <div className="flex flex-col gap-3">
             <Button onClick={() => { setSelectedCha(null); setAssignModal(selectedCha); }}>📌 Assign to Shipment</Button>
-            <Button variant="secondary" onClick={() => { openEdit(selectedCha); setSelectedCha(null); }}>✏️ Edit CHA</Button>
+            <Button variant="secondary" onClick={() => { openEdit(selectedCha); setSelectedCha(null); }}>✏️ Edit Agent</Button>
             <Button variant="secondary" onClick={() => setSelectedCha(null)}>Close</Button>
           </div>
         </Modal>
@@ -269,8 +269,8 @@ export default function ChaPage() {
         </Modal>
       )}
 
-      {addModal && <ChaForm onSubmit={addCha} title="Add New CHA" />}
-      {editModal && <ChaForm onSubmit={updateCha} title="Edit CHA" />}
+      {addModal && <ChaForm onSubmit={addCha} title="Add New Agent" />}
+      {editModal && <ChaForm onSubmit={updateCha} title="Edit Agent" />}
     </div>
   );
 }

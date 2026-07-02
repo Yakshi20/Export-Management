@@ -36,7 +36,7 @@ const chaAgentSchema = new mongoose.Schema(
       type: String,
     },
 
-    exporterId: {
+    ownerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,

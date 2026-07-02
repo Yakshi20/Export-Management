@@ -90,7 +90,6 @@ function ExporterHome() {
           { icon: '📊', title: 'Post-Shipment', sub: 'Track shipment, LC, currency rates', path: '/exporter/post-shipment' },
           { icon: '👥', title: 'Add Buyer', sub: 'Manage your buyer relationships', path: '/exporter/buyers' },
           { icon: '📦', title: 'Create Shipment', sub: 'Start a new export shipment', path: '/exporter/shipments/create' },
-          { icon: '📑', title: 'CHA', sub: 'Manage customs house agents', path: '/cha-agents' },
         ].map(item => (
           <button key={item.title} onClick={() => navigate(item.path)} className="text-left w-full">
             <Card className="flex items-center gap-4 hover:border-[#6366f1]/50 transition-all cursor-pointer">
