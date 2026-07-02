@@ -11,6 +11,38 @@ const PORTS = ['Mumbai Port', 'Chennai Port', 'Mangalore Port'];
 const emptyCha = { chaName: '', licenseNumber: '', port: PORTS[0], phone: '', email: '', specialization: 'Sea', customsCharges: '' };
 const SPEC_COLORS = { Air: 'text-blue-400 bg-blue-400/10', Sea: 'text-cyan-400 bg-cyan-400/10', Both: 'text-purple-400 bg-purple-400/10' };
 
+function ChaForm({ form, setForm, onSubmit, onClose, title, saving }) {
+  return (
+    <Modal isOpen={true} onClose={onClose} title={title}>
+      <form onSubmit={onSubmit} className="space-y-3">
+        <Input label="CHA Name *" value={form.chaName} onChange={e => setForm({ ...form, chaName: e.target.value })} required />
+        <Input label="License Number *" value={form.licenseNumber} onChange={e => setForm({ ...form, licenseNumber: e.target.value })} required />
+        <div>
+          <label className="text-sm text-[#a8b2d8] font-medium block mb-1">Port / Location *</label>
+          <select value={form.port} onChange={e => setForm({ ...form, port: e.target.value })}
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+            {PORTS.map(p => <option key={p}>{p}</option>)}
+          </select>
+        </div>
+        <Input label="Contact Phone *" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} required />
+        <Input label="Contact Email" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+        <div>
+          <label className="text-sm text-[#a8b2d8] font-medium block mb-1">Specialization</label>
+          <select value={form.specialization} onChange={e => setForm({ ...form, specialization: e.target.value })}
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+            {['Air', 'Sea', 'Both'].map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+        <Input label="Customs Charges" value={form.customsCharges} onChange={e => setForm({ ...form, customsCharges: e.target.value })} placeholder="e.g. 2% of shipment value" />
+        <div className="flex gap-3 pt-2">
+          <Button type="submit" loading={saving}>Save CHA</Button>
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
 export default function AgentsPage() {
   const [chas, setChas] = useState([]);
   const [shipments, setShipments] = useState([]);
@@ -91,35 +123,7 @@ export default function AgentsPage() {
 
   if (loading) return <LoadingSpinner />;
 
-  const ChaForm = ({ onSubmit, title }) => (
-    <Modal isOpen={true} onClose={() => { setAddModal(false); setEditModal(false); }} title={title}>
-      <form onSubmit={onSubmit} className="space-y-3">
-        <Input label="CHA Name *" value={form.chaName} onChange={e => setForm({ ...form, chaName: e.target.value })} required />
-        <Input label="License Number *" value={form.licenseNumber} onChange={e => setForm({ ...form, licenseNumber: e.target.value })} required />
-        <div>
-          <label className="text-sm text-[#a8b2d8] font-medium block mb-1">Port / Location *</label>
-          <select value={form.port} onChange={e => setForm({ ...form, port: e.target.value })}
-            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
-            {PORTS.map(p => <option key={p}>{p}</option>)}
-          </select>
-        </div>
-        <Input label="Contact Phone *" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} required />
-        <Input label="Contact Email" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
-        <div>
-          <label className="text-sm text-[#a8b2d8] font-medium block mb-1">Specialization</label>
-          <select value={form.specialization} onChange={e => setForm({ ...form, specialization: e.target.value })}
-            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
-            {['Air', 'Sea', 'Both'].map(s => <option key={s}>{s}</option>)}
-          </select>
-        </div>
-        <Input label="Customs Charges" value={form.customsCharges} onChange={e => setForm({ ...form, customsCharges: e.target.value })} placeholder="e.g. 2% of shipment value" />
-        <div className="flex gap-3 pt-2">
-          <Button type="submit" loading={saving}>Save CHA</Button>
-          <Button variant="secondary" onClick={() => { setAddModal(false); setEditModal(false); }}>Cancel</Button>
-        </div>
-      </form>
-    </Modal>
-  );
+  const closeModals = () => { setAddModal(false); setEditModal(false); };
 
   return (
     <div className="space-y-6">
@@ -269,8 +273,8 @@ export default function AgentsPage() {
         </Modal>
       )}
 
-      {addModal && <ChaForm onSubmit={addCha} title="Add New Agent" />}
-      {editModal && <ChaForm onSubmit={updateCha} title="Edit Agent" />}
+      {addModal && <ChaForm form={form} setForm={setForm} onSubmit={addCha} onClose={closeModals} title="Add New Agent" saving={saving} />}
+      {editModal && <ChaForm form={form} setForm={setForm} onSubmit={updateCha} onClose={closeModals} title="Edit Agent" saving={saving} />}
     </div>
   );
 }

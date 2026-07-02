@@ -11,6 +11,33 @@ import Toast from '../../components/ui/Toast';
 const emptyBuyer = { buyerName: '', companyName: '', email: '', phone: '', country: '', address: '', productInterested: '', status: 'Interested' };
 const STATUS_COLORS = { Interested: 'text-blue-400 bg-blue-400/10', Negotiating: 'text-yellow-400 bg-yellow-400/10', Confirmed: 'text-green-400 bg-green-400/10' };
 
+function BuyerForm({ form, setForm, onSubmit, onClose, title, saving }) {
+  return (
+    <Modal isOpen={true} onClose={onClose} title={title}>
+      <form onSubmit={onSubmit} className="space-y-3">
+        <Input label="Buyer Name *" value={form.buyerName} onChange={e => setForm({...form, buyerName: e.target.value})} required />
+        <Input label="Company Name" value={form.companyName} onChange={e => setForm({...form, companyName: e.target.value})} />
+        <Input label="Email *" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required />
+        <Input label="Phone *" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} required />
+        <Input label="Country *" value={form.country} onChange={e => setForm({...form, country: e.target.value})} required />
+        <Input label="Product Interested" value={form.productInterested} onChange={e => setForm({...form, productInterested: e.target.value})} placeholder="e.g. Mango, Spices" />
+        <div>
+          <label className="text-sm text-[#a8b2d8] font-medium block mb-1">Status</label>
+          <select value={form.status} onChange={e => setForm({...form, status: e.target.value})}
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
+            {['Interested', 'Negotiating', 'Confirmed'].map(s => <option key={s}>{s}</option>)}
+          </select>
+        </div>
+        <Input label="Address" value={form.address} onChange={e => setForm({...form, address: e.target.value})} />
+        <div className="flex gap-3 pt-2">
+          <Button type="submit" loading={saving}>Save Buyer</Button>
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
 export default function BuyersPage() {
   const [buyers, setBuyers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -73,30 +100,7 @@ export default function BuyersPage() {
 
   if (loading) return <LoadingSpinner />;
 
-  const BuyerForm = ({ onSubmit, title }) => (
-    <Modal isOpen={true} onClose={() => { setAddModal(false); setEditModal(false); }} title={title}>
-      <form onSubmit={onSubmit} className="space-y-3">
-        <Input label="Buyer Name *" value={form.buyerName} onChange={e => setForm({...form, buyerName: e.target.value})} required />
-        <Input label="Company Name" value={form.companyName} onChange={e => setForm({...form, companyName: e.target.value})} />
-        <Input label="Email *" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} required />
-        <Input label="Phone *" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
-        <Input label="Country *" value={form.country} onChange={e => setForm({...form, country: e.target.value})} />
-        <Input label="Product Interested" value={form.productInterested} onChange={e => setForm({...form, productInterested: e.target.value})} placeholder="e.g. Mango, Spices" />
-        <div>
-          <label className="text-sm text-[#a8b2d8] font-medium block mb-1">Status</label>
-          <select value={form.status} onChange={e => setForm({...form, status: e.target.value})}
-            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
-            {['Interested', 'Negotiating', 'Confirmed'].map(s => <option key={s}>{s}</option>)}
-          </select>
-        </div>
-        <Input label="Address" value={form.address} onChange={e => setForm({...form, address: e.target.value})} />
-        <div className="flex gap-3 pt-2">
-          <Button type="submit" loading={saving}>Save Buyer</Button>
-          <Button variant="secondary" onClick={() => { setAddModal(false); setEditModal(false); }}>Cancel</Button>
-        </div>
-      </form>
-    </Modal>
-  );
+  const closeModals = () => { setAddModal(false); setEditModal(false); };
 
   return (
     <div className="space-y-6">
@@ -202,8 +206,8 @@ export default function BuyersPage() {
         </Modal>
       )}
 
-      {addModal && <BuyerForm onSubmit={addBuyer} title="Add New Buyer" />}
-      {editModal && <BuyerForm onSubmit={updateBuyer} title="Edit Buyer" />}
+      {addModal && <BuyerForm form={form} setForm={setForm} onSubmit={addBuyer} onClose={closeModals} title="Add New Buyer" saving={saving} />}
+      {editModal && <BuyerForm form={form} setForm={setForm} onSubmit={updateBuyer} onClose={closeModals} title="Edit Buyer" saving={saving} />}
     </div>
   );
 }
