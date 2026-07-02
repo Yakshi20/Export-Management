@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Autocomplete from '../../components/ui/Autocomplete';
+import Modal from '../../components/ui/Modal';
 
 const PRODUCT_CATEGORIES = {
   Spices: ['Turmeric', 'Pepper', 'Cardamom', 'Chilli', 'Cumin', 'Coriander'],
@@ -49,7 +50,15 @@ const USER_DOC_FIELDS = [
 
 const STATUS_OPTIONS = ['✅ Verified', '⏳ Pending', '❌ Missing'];
 
-const emptyProductForm = { product: '', category: '', from: 'India', to: '', hsCode: '', quantity: '', value: '', packaging: '', qualityCert: '', qualityCertFile: '' };
+const BASE_REQUIRED_DOCS = ['IEC', 'GST', 'RCMC', 'FSSAI', 'Certificate of Origin', 'Phytosanitary', 'Invoice', 'Packing List'];
+const CATEGORY_REQUIRED_DOCS = { Spices: ['Spices Board Certificate'] };
+
+const getRequiredDocs = (category, toCountry) => {
+  const docs = [...BASE_REQUIRED_DOCS, ...(CATEGORY_REQUIRED_DOCS[category] || []), ...(COUNTRY_DOCS[toCountry] || [])];
+  return [...new Set(docs)];
+};
+
+const emptyProductForm = { product: '', category: '', from: 'India', to: '', hsCode: '', quantity: '', value: '', packaging: '' };
 
 export default function DocumentationPage() {
   const navigate = useNavigate();
@@ -64,9 +73,14 @@ export default function DocumentationPage() {
 
   // Product docs
   const [productForm, setProductForm] = useState(emptyProductForm);
-  const [certificateFileName, setCertificateFileName] = useState('');
   const [savedProducts, setSavedProducts] = useState(JSON.parse(localStorage.getItem('productDocs') || '[]'));
   const [lastSaved, setLastSaved] = useState(false);
+  const [viewProduct, setViewProduct] = useState(null);
+
+  // Verify document flow
+  const [draftProduct, setDraftProduct] = useState(null);
+  const [docStatus, setDocStatus] = useState({});
+  const [verifyStep, setVerifyStep] = useState('checklist');
 
   const showMsg = (text, type = 'success') => {
     setMsg({ text, type });
@@ -79,41 +93,92 @@ export default function DocumentationPage() {
     showMsg('Documents saved!');
   };
 
-  const saveProductDoc = () => {
-    if (!productForm.product || !productForm.to) { showMsg('Select product and destination country', 'error'); return; }
-    const list = [...savedProducts, { ...productForm, savedAt: new Date().toLocaleDateString() }];
-    localStorage.setItem('productDocs', JSON.stringify(list));
-    setSavedProducts(list);
-    showMsg('Product document saved!');
-    setProductForm(emptyProductForm);
-    setCertificateFileName('');
-    setLastSaved(true);
-  };
-
-  const handleCertificateFile = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setCertificateFileName(file.name);
-    const reader = new FileReader();
-    reader.onload = (ev) => setProductForm(f => ({ ...f, qualityCertFile: ev.target.result }));
-    reader.readAsDataURL(file);
-  };
-
   const autoHsCode = (product) => {
     const match = Object.entries(HS_CODES).find(([k]) => product.toLowerCase().includes(k.toLowerCase()));
     return match ? match[1] : '';
   };
 
-  const requiredDocs = COUNTRY_DOCS[productForm.to] || [];
+  const startUpload = () => {
+    if (!productForm.product || !productForm.to) { showMsg('Select product and destination country', 'error'); return; }
+    const required = getRequiredDocs(productForm.category, productForm.to);
+    setDraftProduct({ ...productForm });
+    setDocStatus(Object.fromEntries(required.map(d => [d, { uploaded: false, fileName: '' }])));
+    setVerifyStep('checklist');
+    setLastSaved(false);
+    setTab('verify');
+  };
+
+  const uploadDoc = (docName, file) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setDocStatus(s => ({ ...s, [docName]: { uploaded: true, fileName: file.name, fileData: ev.target.result } }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const requiredDocsForDraft = draftProduct ? getRequiredDocs(draftProduct.category, draftProduct.to) : [];
+  const uploadedCount = requiredDocsForDraft.filter(d => docStatus[d]?.uploaded).length;
+
+  const saveVerifiedDocument = () => {
+    const entry = {
+      ...draftProduct,
+      docs: docStatus,
+      requiredDocs: requiredDocsForDraft,
+      verified: requiredDocsForDraft.length > 0 && uploadedCount === requiredDocsForDraft.length,
+      savedAt: new Date().toLocaleDateString(),
+    };
+    const list = [...savedProducts, entry];
+    localStorage.setItem('productDocs', JSON.stringify(list));
+    setSavedProducts(list);
+    showMsg('Document saved!');
+    setProductForm(emptyProductForm);
+    setDraftProduct(null);
+    setDocStatus({});
+    setVerifyStep('checklist');
+    setLastSaved(true);
+    setTab('product');
+  };
 
   return (
     <div className="space-y-5">
+      {viewProduct && (
+        <Modal isOpen={!!viewProduct} onClose={() => setViewProduct(null)} title={`${viewProduct.product} — Document Details`}>
+          <div className="space-y-3 mb-5">
+            {[
+              ['Category', viewProduct.category],
+              ['HS Code', viewProduct.hsCode],
+              ['Quantity', viewProduct.quantity],
+              ['Value (USD)', viewProduct.value],
+              ['Packaging', viewProduct.packaging],
+              ['From', viewProduct.from],
+              ['To', viewProduct.to],
+            ].filter(([, v]) => v).map(([label, value]) => (
+              <div key={label} className="flex justify-between border-b border-white/10 pb-2">
+                <span className="text-[#a8b2d8] text-sm">{label}</span>
+                <span className="text-white text-sm font-medium">{value}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-[#a8b2d8] text-xs font-semibold uppercase tracking-widest mb-2">Verified Documents</p>
+          <div className="space-y-2">
+            {(viewProduct.requiredDocs || []).map(d => (
+              <div key={d} className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2">
+                <span className="text-white text-sm">{d}</span>
+                {viewProduct.docs?.[d]?.uploaded
+                  ? <span className="text-green-400 text-xs font-semibold">✅ {viewProduct.docs[d].fileName}</span>
+                  : <span className="text-yellow-400 text-xs font-semibold">⏳ Missing</span>}
+              </div>
+            ))}
+          </div>
+        </Modal>
+      )}
+
       <h1 className="text-2xl font-bold text-white">Documents</h1>
 
-      <div className="flex border-b border-white/10">
-        {[{ id: 'user', label: '👤 User Documents' }, { id: 'product', label: '📦 Product Documents' }].map(t => (
+      <div className="flex border-b border-white/10 overflow-x-auto">
+        {[{ id: 'user', label: '👤 User Documents' }, { id: 'product', label: '📦 Product Documents' }, { id: 'verify', label: '✅ Verify Document' }].map(t => (
           <button key={t.id} onClick={() => { setTab(t.id); setMsg(null); }}
-            className={`px-5 py-2.5 text-sm font-semibold transition-all ${tab === t.id ? 'text-[#6366f1] border-b-2 border-[#6366f1]' : 'text-[#a8b2d8] hover:text-white'}`}>
+            className={`px-5 py-2.5 text-sm font-semibold whitespace-nowrap transition-all ${tab === t.id ? 'text-[#6366f1] border-b-2 border-[#6366f1]' : 'text-[#a8b2d8] hover:text-white'}`}>
             {t.label}
           </button>
         ))}
@@ -234,36 +299,10 @@ export default function DocumentationPage() {
                   options={COUNTRIES} placeholder="e.g. USA" />
               </div>
             </div>
-
-            {/* Quality Cert */}
-            <div>
-              <label className="text-[#a8b2d8] text-xs block mb-1">Quality Certificates</label>
-              <input value={productForm.qualityCert} onChange={e => setProductForm(f => ({ ...f, qualityCert: e.target.value }))}
-                placeholder="e.g. APEDA, Organic, ISO 22000"
-                className="w-full bg-[#0a0a1a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#6366f1]" />
-            </div>
-
-            {/* Quality Cert Upload */}
-            <div>
-              <label className="text-[#a8b2d8] text-xs block mb-1">Upload Quality Certificate</label>
-              <input type="file" accept=".pdf,image/*" onChange={handleCertificateFile}
-                className="w-full text-sm text-[#a8b2d8] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#6366f1] file:text-white file:text-sm file:font-semibold file:cursor-pointer hover:file:bg-[#5254cc]" />
-              {certificateFileName && <p className="text-xs text-green-400 mt-1">📎 {certificateFileName}</p>}
-            </div>
-
-            {/* Country-specific required docs */}
-            {requiredDocs.length > 0 && (
-              <div className="bg-[#6366f1]/10 border border-[#6366f1]/30 rounded-lg p-4">
-                <p className="text-[#6366f1] text-xs font-bold mb-2">📋 Required for {productForm.to}:</p>
-                <ul className="space-y-1">
-                  {requiredDocs.map(d => <li key={d} className="text-[#a8b2d8] text-xs flex items-center gap-2"><span className="text-yellow-400">⚠️</span>{d}</li>)}
-                </ul>
-              </div>
-            )}
           </div>
 
-          <button onClick={saveProductDoc} className="w-full py-3 rounded-xl bg-[#6366f1] text-white font-semibold text-sm hover:bg-[#5254cc] transition-all">
-            💾 Save Product Document
+          <button onClick={startUpload} className="w-full py-3 rounded-xl bg-[#6366f1] text-white font-semibold text-sm hover:bg-[#5254cc] transition-all">
+            📤 Upload Document
           </button>
 
           {lastSaved && (
@@ -284,16 +323,100 @@ export default function DocumentationPage() {
               <p className="text-[#a8b2d8] text-xs font-semibold uppercase tracking-widest">Saved</p>
               {savedProducts.map((s, i) => (
                 <div key={i} className="bg-[#16213e] rounded-xl px-4 py-3 border border-white/10">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="text-white text-sm font-semibold">{s.product} {s.hsCode && <span className="text-[#6366f1] text-xs ml-2">HS: {s.hsCode}</span>}</p>
+                  <div className="flex justify-between items-start gap-3">
+                    <div className="min-w-0">
+                      <p className="text-white text-sm font-semibold truncate">{s.product} {s.hsCode && <span className="text-[#6366f1] text-xs ml-2">HS: {s.hsCode}</span>}</p>
                       <p className="text-[#a8b2d8] text-xs">{s.from} → {s.to} {s.quantity && `• ${s.quantity}`}</p>
+                      {s.category && <p className="text-[#a8b2d8] text-xs">🏷️ {s.category}</p>}
                     </div>
-                    <span className="text-[#a8b2d8] text-xs">{s.savedAt}</span>
+                    <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                      <span className="text-[#a8b2d8] text-xs">{s.savedAt}</span>
+                      {s.requiredDocs && (
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${s.verified ? 'bg-green-400/10 text-green-400' : 'bg-yellow-400/10 text-yellow-400'}`}>
+                          {s.verified ? '✅ Verified' : '⏳ Partial'}
+                        </span>
+                      )}
+                      <button onClick={() => setViewProduct(s)} className="text-[#6366f1] text-xs font-semibold hover:underline">View</button>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
+          )}
+        </div>
+      )}
+
+      {/* VERIFY DOCUMENT */}
+      {tab === 'verify' && (
+        <div className="space-y-4">
+          {!draftProduct ? (
+            <div className="bg-[#16213e] rounded-xl p-10 text-center border border-white/10">
+              <div className="text-4xl mb-3">✅</div>
+              <p className="text-[#a8b2d8] text-sm">No document in progress. Fill in Product Documents and click "Upload Document" to start verification.</p>
+            </div>
+          ) : verifyStep === 'checklist' ? (
+            <>
+              <div className="bg-[#16213e] rounded-xl p-4 border border-white/10">
+                <p className="text-white font-semibold text-sm">{draftProduct.product} {draftProduct.category && <span className="text-[#a8b2d8] text-xs">({draftProduct.category})</span>}</p>
+                <p className="text-[#a8b2d8] text-xs">{draftProduct.from} → {draftProduct.to}</p>
+              </div>
+              <div className="bg-[#6366f1]/10 border border-[#6366f1]/30 rounded-lg p-3">
+                <p className="text-[#6366f1] text-xs font-bold">📋 Required Documents ({uploadedCount}/{requiredDocsForDraft.length} uploaded)</p>
+              </div>
+              <div className="space-y-3">
+                {requiredDocsForDraft.map(doc => (
+                  <div key={doc} className="bg-[#16213e] rounded-xl p-4 border border-white/10 flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-white text-sm font-semibold">{doc}</p>
+                      {docStatus[doc]?.uploaded && <p className="text-green-400 text-xs mt-0.5 truncate">📎 {docStatus[doc].fileName}</p>}
+                    </div>
+                    <label className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition-all ${docStatus[doc]?.uploaded ? 'bg-green-500/10 text-green-400 border border-green-400/20' : 'bg-[#6366f1] text-white hover:bg-[#5254cc]'}`}>
+                      {docStatus[doc]?.uploaded ? '✅ Uploaded' : '📎 Upload'}
+                      <input type="file" accept=".pdf,image/*" className="hidden" onChange={e => e.target.files[0] && uploadDoc(doc, e.target.files[0])} />
+                    </label>
+                  </div>
+                ))}
+              </div>
+              <button onClick={() => setVerifyStep('review')} className="w-full py-3 rounded-xl bg-[#6366f1] text-white font-semibold text-sm hover:bg-[#5254cc] transition-all">
+                Continue to Review →
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="bg-[#16213e] rounded-xl p-5 border border-white/10 space-y-3">
+                <p className="text-white font-bold text-base mb-2">📋 Review Document</p>
+                {[
+                  ['Product', draftProduct.product],
+                  ['Category', draftProduct.category],
+                  ['HS Code', draftProduct.hsCode],
+                  ['Quantity', draftProduct.quantity],
+                  ['Value (USD)', draftProduct.value],
+                  ['Packaging', draftProduct.packaging],
+                  ['From', draftProduct.from],
+                  ['To', draftProduct.to],
+                ].filter(([, v]) => v).map(([label, value]) => (
+                  <div key={label} className="flex justify-between border-b border-white/10 pb-2">
+                    <span className="text-[#a8b2d8] text-sm">{label}</span>
+                    <span className="text-white text-sm font-medium">{value}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="space-y-2">
+                <p className="text-[#a8b2d8] text-xs font-semibold uppercase tracking-widest">Documents ({uploadedCount}/{requiredDocsForDraft.length})</p>
+                {requiredDocsForDraft.map(doc => (
+                  <div key={doc} className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2">
+                    <span className="text-white text-sm">{doc}</span>
+                    {docStatus[doc]?.uploaded
+                      ? <span className="text-green-400 text-xs font-semibold">✅ {docStatus[doc].fileName}</span>
+                      : <span className="text-yellow-400 text-xs font-semibold">⏳ Missing</span>}
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-3">
+                <button onClick={() => setVerifyStep('checklist')} className="flex-1 py-3 rounded-xl border border-white/20 text-white font-semibold text-sm hover:bg-white/10 transition-all">← Back</button>
+                <button onClick={saveVerifiedDocument} className="flex-1 py-3 rounded-xl bg-green-600 text-white font-semibold text-sm hover:bg-green-700 transition-all">✅ Save Document</button>
+              </div>
+            </>
           )}
         </div>
       )}
