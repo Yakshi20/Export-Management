@@ -9,6 +9,7 @@ import CreateShipmentPage from './shipments/CreateShipmentPage';
 import PreShipmentPage from './PreShipmentPage';
 import PostShipmentPage from './PostShipmentPage';
 import BuyersPage from './BuyersPage';
+import ChaBookingPage from './ChaBookingPage';
 import DocumentationPage from './DocumentationPage';
 import api from '../../api/axios';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
@@ -19,6 +20,7 @@ const links = [
   { label: 'Docs', path: '/exporter/docs', icon: '🗂️' },
   { label: 'Shipments', path: '/exporter/shipments', icon: '📦' },
   { label: 'Buyers', path: '/exporter/buyers', icon: '👥' },
+  { label: 'CHA', path: '/exporter/cha', icon: '📑' },
   { label: 'Chat', path: '/exporter/chat', icon: '💬' },
 ];
 
@@ -162,6 +164,7 @@ export default function ExporterDashboard() {
         <Route path="/pre-shipment" element={<PreShipmentPage />} />
         <Route path="/post-shipment" element={<PostShipmentPage />} />
         <Route path="/buyers" element={<BuyersPage />} />
+        <Route path="/cha" element={<ChaBookingPage />} />
         <Route path="/docs" element={<DocumentationPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/chat" element={<ChatPage userRole="exporter" />} />

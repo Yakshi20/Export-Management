@@ -47,6 +47,7 @@ export const getShipments = async (req, res) => {
     const shipments = await Shipment.find({ exporterId: req.user.id })
       .populate("buyerId", "buyerName companyName country")
       .populate("chaAgentId", "chaName port specialization")
+      .populate("assignedChaId", "email portCode customBrokerLicense")
       .sort({ createdAt: -1 });
     successResponse(res, "Shipments fetched successfully", shipments);
   } catch (error) {
