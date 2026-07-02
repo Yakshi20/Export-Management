@@ -1,16 +1,18 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Autocomplete from '../../components/ui/Autocomplete';
 
-const PRODUCTS = [
-  'Tomato', 'Potato', 'Onion', 'Garlic', 'Ginger', 'Carrot', 'Cabbage', 'Cauliflower',
-  'Spinach', 'Brinjal', 'Okra', 'Bitter Gourd', 'Bottle Gourd', 'Pumpkin', 'Cucumber',
-  'Mango', 'Banana', 'Apple', 'Grapes', 'Pomegranate', 'Papaya', 'Guava', 'Watermelon',
-  'Pineapple', 'Orange', 'Lemon', 'Coconut', 'Strawberry', 'Kiwi', 'Avocado',
-  'Red Chilli', 'Turmeric', 'Coriander', 'Cumin', 'Black Pepper', 'Cardamom', 'Cloves',
-  'Basmati Rice', 'Wheat', 'Maize', 'Soybean', 'Cotton',
-];
+const PRODUCT_CATEGORIES = {
+  Spices: ['Turmeric', 'Pepper', 'Cardamom', 'Chilli', 'Cumin', 'Coriander'],
+  Fruits: ['Mango', 'Banana', 'Pomegranate', 'Grapes', 'Papaya'],
+  Vegetables: ['Onion', 'Potato', 'Tomato', 'Okra', 'Green Chilli'],
+  Grains: ['Basmati Rice', 'Wheat', 'Maize', 'Sorghum'],
+  'Dry Fruits': ['Cashew Nuts', 'Almonds', 'Raisins', 'Walnuts', 'Pistachios'],
+};
+const CATEGORIES = Object.keys(PRODUCT_CATEGORIES);
 
 const COUNTRIES = [
-  'India', 'United States', 'United Kingdom', 'United Arab Emirates', 'Saudi Arabia',
+  'India', 'Indonesia', 'United States', 'United Kingdom', 'United Arab Emirates', 'Saudi Arabia',
   'Germany', 'France', 'Netherlands', 'Canada', 'Australia', 'Japan', 'China',
   'Singapore', 'Malaysia', 'Bangladesh', 'Sri Lanka', 'Nepal', 'Pakistan',
   'South Africa', 'Kenya', 'Nigeria', 'Egypt', 'Qatar', 'Kuwait', 'Bahrain', 'Oman',
@@ -47,7 +49,10 @@ const USER_DOC_FIELDS = [
 
 const STATUS_OPTIONS = ['✅ Verified', '⏳ Pending', '❌ Missing'];
 
+const emptyProductForm = { product: '', category: '', from: 'India', to: '', hsCode: '', quantity: '', value: '', packaging: '', qualityCert: '', qualityCertFile: '' };
+
 export default function DocumentationPage() {
+  const navigate = useNavigate();
   const [tab, setTab] = useState('user');
   const [msg, setMsg] = useState(null);
 
@@ -58,8 +63,10 @@ export default function DocumentationPage() {
   const fileRefs = useRef({});
 
   // Product docs
-  const [productForm, setProductForm] = useState({ product: '', category: '', from: 'India', to: '', hsCode: '', quantity: '', value: '', packaging: '', qualityCert: '' });
+  const [productForm, setProductForm] = useState(emptyProductForm);
+  const [certificateFileName, setCertificateFileName] = useState('');
   const [savedProducts, setSavedProducts] = useState(JSON.parse(localStorage.getItem('productDocs') || '[]'));
+  const [lastSaved, setLastSaved] = useState(false);
 
   const showMsg = (text, type = 'success') => {
     setMsg({ text, type });
@@ -78,7 +85,18 @@ export default function DocumentationPage() {
     localStorage.setItem('productDocs', JSON.stringify(list));
     setSavedProducts(list);
     showMsg('Product document saved!');
-    setProductForm({ product: '', category: '', from: 'India', to: '', hsCode: '', quantity: '', value: '', packaging: '', qualityCert: '' });
+    setProductForm(emptyProductForm);
+    setCertificateFileName('');
+    setLastSaved(true);
+  };
+
+  const handleCertificateFile = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setCertificateFileName(file.name);
+    const reader = new FileReader();
+    reader.onload = (ev) => setProductForm(f => ({ ...f, qualityCertFile: ev.target.result }));
+    reader.readAsDataURL(file);
   };
 
   const autoHsCode = (product) => {
@@ -147,27 +165,25 @@ export default function DocumentationPage() {
           <div className="bg-[#16213e] rounded-xl p-5 border border-white/10 space-y-4">
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Product */}
+              {/* Product Category */}
               <div>
-                <label className="text-[#a8b2d8] text-xs block mb-1">Product</label>
-                <select value={productForm.product}
-                  onChange={e => { const p = e.target.value; setProductForm(f => ({ ...f, product: p, hsCode: autoHsCode(p) })); }}
+                <label className="text-[#a8b2d8] text-xs block mb-1">Product Category</label>
+                <select value={productForm.category}
+                  onChange={e => setProductForm(f => ({ ...f, category: e.target.value, product: '', hsCode: '' }))}
                   className="w-full bg-[#0a0a1a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#6366f1]">
-                  <option value="">-- Select Product --</option>
-                  <optgroup label="Vegetables">{PRODUCTS.slice(0, 15).map(p => <option key={p}>{p}</option>)}</optgroup>
-                  <optgroup label="Fruits">{PRODUCTS.slice(15, 30).map(p => <option key={p}>{p}</option>)}</optgroup>
-                  <optgroup label="Spices & Grains">{PRODUCTS.slice(30).map(p => <option key={p}>{p}</option>)}</optgroup>
+                  <option value="">-- Select Category --</option>
+                  {CATEGORIES.map(c => <option key={c}>{c}</option>)}
                 </select>
               </div>
 
-              {/* Category */}
+              {/* Product */}
               <div>
-                <label className="text-[#a8b2d8] text-xs block mb-1">Product Category</label>
-                <select value={productForm.category} onChange={e => setProductForm(f => ({ ...f, category: e.target.value }))}
-                  className="w-full bg-[#0a0a1a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#6366f1]">
-                  <option value="">-- Select Category --</option>
-                  {['Fresh Vegetables', 'Fresh Fruits', 'Spices', 'Grains & Cereals', 'Organic Produce', 'Processed Food'].map(c => <option key={c}>{c}</option>)}
-                </select>
+                <label className="text-[#a8b2d8] text-xs block mb-1">Product</label>
+                <Autocomplete value={productForm.product}
+                  onChange={p => setProductForm(f => ({ ...f, product: p, hsCode: autoHsCode(p) }))}
+                  options={PRODUCT_CATEGORIES[productForm.category] || []}
+                  disabled={!productForm.category}
+                  placeholder={productForm.category ? 'e.g. Turmeric' : 'Select a category first'} />
               </div>
 
               {/* HS Code */}
@@ -207,20 +223,15 @@ export default function DocumentationPage() {
               {/* From */}
               <div>
                 <label className="text-[#a8b2d8] text-xs block mb-1">From Country</label>
-                <select value={productForm.from} onChange={e => setProductForm(f => ({ ...f, from: e.target.value }))}
-                  className="w-full bg-[#0a0a1a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#6366f1]">
-                  {COUNTRIES.map(c => <option key={c}>{c}</option>)}
-                </select>
+                <Autocomplete value={productForm.from} onChange={v => setProductForm(f => ({ ...f, from: v }))}
+                  options={COUNTRIES} placeholder="e.g. India" />
               </div>
 
               {/* To */}
               <div>
                 <label className="text-[#a8b2d8] text-xs block mb-1">To Country</label>
-                <select value={productForm.to} onChange={e => setProductForm(f => ({ ...f, to: e.target.value }))}
-                  className="w-full bg-[#0a0a1a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#6366f1]">
-                  <option value="">-- Select Destination --</option>
-                  {COUNTRIES.map(c => <option key={c}>{c}</option>)}
-                </select>
+                <Autocomplete value={productForm.to} onChange={v => setProductForm(f => ({ ...f, to: v }))}
+                  options={COUNTRIES} placeholder="e.g. USA" />
               </div>
             </div>
 
@@ -230,6 +241,14 @@ export default function DocumentationPage() {
               <input value={productForm.qualityCert} onChange={e => setProductForm(f => ({ ...f, qualityCert: e.target.value }))}
                 placeholder="e.g. APEDA, Organic, ISO 22000"
                 className="w-full bg-[#0a0a1a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#6366f1]" />
+            </div>
+
+            {/* Quality Cert Upload */}
+            <div>
+              <label className="text-[#a8b2d8] text-xs block mb-1">Upload Quality Certificate</label>
+              <input type="file" accept=".pdf,image/*" onChange={handleCertificateFile}
+                className="w-full text-sm text-[#a8b2d8] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-[#6366f1] file:text-white file:text-sm file:font-semibold file:cursor-pointer hover:file:bg-[#5254cc]" />
+              {certificateFileName && <p className="text-xs text-green-400 mt-1">📎 {certificateFileName}</p>}
             </div>
 
             {/* Country-specific required docs */}
@@ -246,6 +265,19 @@ export default function DocumentationPage() {
           <button onClick={saveProductDoc} className="w-full py-3 rounded-xl bg-[#6366f1] text-white font-semibold text-sm hover:bg-[#5254cc] transition-all">
             💾 Save Product Document
           </button>
+
+          {lastSaved && (
+            <div className="bg-[#16213e] rounded-xl p-4 border border-white/10 flex flex-col sm:flex-row gap-3">
+              <button onClick={() => navigate('/exporter/cha')}
+                className="flex-1 py-2.5 rounded-xl bg-[#6366f1] text-white font-semibold text-sm hover:bg-[#5254cc] transition-all">
+                📌 Book CHA
+              </button>
+              <button onClick={() => navigate('/exporter/forwarder')}
+                className="flex-1 py-2.5 rounded-xl border border-white/20 text-white font-semibold text-sm hover:bg-white/10 transition-all">
+                🚚 Book Freight Forwarder
+              </button>
+            </div>
+          )}
 
           {savedProducts.length > 0 && (
             <div className="space-y-2">
