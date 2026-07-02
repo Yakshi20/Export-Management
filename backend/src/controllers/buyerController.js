@@ -3,7 +3,7 @@ import { successResponse } from "../utils/response.js";
 
 export const createBuyer = async (req, res) => {
   try {
-    const { buyerName, companyName, email, phone, country, address } = req.body;
+    const { buyerName, companyName, email, phone, country, address, productInterested, status } = req.body;
 
     const buyer = await Buyer.create({
       buyerName,
@@ -12,6 +12,8 @@ export const createBuyer = async (req, res) => {
       phone,
       country,
       address,
+      productInterested,
+      status,
       exporterId: req.user.id,
     });
 

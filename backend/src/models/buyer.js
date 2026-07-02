@@ -30,6 +30,16 @@ const buyerSchema = new mongoose.Schema(
       type: String,
     },
 
+    productInterested: {
+      type: String,
+    },
+
+    status: {
+      type: String,
+      enum: ["Interested", "Negotiating", "Confirmed"],
+      default: "Interested",
+    },
+
     exporterId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
