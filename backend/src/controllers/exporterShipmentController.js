@@ -17,6 +17,7 @@ export const createShipment = async (req, res) => {
       shipmentValue,
       shippingMethod,
       buyerId,
+      qualityCertificate,
     } = req.body;
 
     const shipment = await Shipment.create({
@@ -33,6 +34,7 @@ export const createShipment = async (req, res) => {
       shipmentValue,
       shippingMethod,
       buyerId,
+      qualityCertificate,
       exporterId: req.user.id,
     });
 
@@ -48,6 +50,7 @@ export const getShipments = async (req, res) => {
       .populate("buyerId", "buyerName companyName country")
       .populate("chaAgentId", "chaName port specialization")
       .populate("assignedChaId", "email portCode customBrokerLicense")
+      .populate("assignedForwarderId", "email mtoLicenseNumber")
       .sort({ createdAt: -1 });
     successResponse(res, "Shipments fetched successfully", shipments);
   } catch (error) {

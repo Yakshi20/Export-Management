@@ -93,6 +93,10 @@ const shipmentSchema = new mongoose.Schema(
       ref: "ChaAgent",
     },
 
+    qualityCertificate: {
+      type: String,
+    },
+
     letterOfCredit: {
       type: String,
     },
