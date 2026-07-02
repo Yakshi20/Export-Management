@@ -9,7 +9,6 @@ import CreateShipmentPage from './shipments/CreateShipmentPage';
 import PreShipmentPage from './PreShipmentPage';
 import PostShipmentPage from './PostShipmentPage';
 import BuyersPage from './BuyersPage';
-import ChaPage from './ChaPage';
 import DocumentationPage from './DocumentationPage';
 import api from '../../api/axios';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
@@ -20,7 +19,6 @@ const links = [
   { label: 'Docs', path: '/exporter/docs', icon: '🗂️' },
   { label: 'Shipments', path: '/exporter/shipments', icon: '📦' },
   { label: 'Buyers', path: '/exporter/buyers', icon: '👥' },
-  { label: 'CHA', path: '/exporter/cha', icon: '📑' },
   { label: 'Chat', path: '/exporter/chat', icon: '💬' },
 ];
 
@@ -92,6 +90,7 @@ function ExporterHome() {
           { icon: '📊', title: 'Post-Shipment', sub: 'Track shipment, LC, currency rates', path: '/exporter/post-shipment' },
           { icon: '👥', title: 'Add Buyer', sub: 'Manage your buyer relationships', path: '/exporter/buyers' },
           { icon: '📦', title: 'Create Shipment', sub: 'Start a new export shipment', path: '/exporter/shipments/create' },
+          { icon: '📑', title: 'CHA', sub: 'Manage customs house agents', path: '/cha-agents' },
         ].map(item => (
           <button key={item.title} onClick={() => navigate(item.path)} className="text-left w-full">
             <Card className="flex items-center gap-4 hover:border-[#6366f1]/50 transition-all cursor-pointer">
@@ -164,7 +163,6 @@ export default function ExporterDashboard() {
         <Route path="/pre-shipment" element={<PreShipmentPage />} />
         <Route path="/post-shipment" element={<PostShipmentPage />} />
         <Route path="/buyers" element={<BuyersPage />} />
-        <Route path="/cha" element={<ChaPage />} />
         <Route path="/docs" element={<DocumentationPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/chat" element={<ChatPage userRole="exporter" />} />

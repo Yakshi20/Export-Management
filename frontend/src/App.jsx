@@ -11,6 +11,7 @@ import FarmerDashboard from './pages/farmer/FarmerDashboard';
 import CHADashboard from './pages/cha/CHADashboard';
 import ForwarderDashboard from './pages/forwarder/ForwarderDashboard';
 import AdviserDashboard from './pages/adviser/AdviserDashboard';
+import ChaAgentsDashboard from './pages/chaAgents/ChaAgentsDashboard';
 function App() {
   return (
     <BrowserRouter>
@@ -26,6 +27,7 @@ function App() {
           <Route path="/cha/*" element={<ProtectedRoute role="cha"><CHADashboard /></ProtectedRoute>} />
           <Route path="/forwarder/*" element={<ProtectedRoute role="forwarder"><ForwarderDashboard /></ProtectedRoute>} />
           <Route path="/adviser/*" element={<ProtectedRoute role="adviser"><AdviserDashboard /></ProtectedRoute>} />
+          <Route path="/cha-agents/*" element={<ProtectedRoute role="exporter"><ChaAgentsDashboard /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
