@@ -12,6 +12,13 @@
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#0a0a1a"
+      },
+      "package": "com.exportpro.app",
+      "versionCode": 1
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0f163b47-b8d5-4766-bf0f-0b67d4352142"
       }
     }
   }

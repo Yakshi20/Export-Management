@@ -15,7 +15,7 @@ const PostShipmentScreen = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    api.get('/exporter/shipments').then(r => setShipments(r.data || [])).catch(() => {});
+    api.get('/exporter/shipments').then(r => setShipments(r.data?.data || r.data || [])).catch(() => {});
   }, []);
 
   const submitLC = async () => {

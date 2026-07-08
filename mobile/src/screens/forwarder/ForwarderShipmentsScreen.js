@@ -19,7 +19,7 @@ const ForwarderShipmentsScreen = () => {
   const [status, setStatus] = useState('');
 
   const fetch = async () => {
-    try { const r = await api.get('/forwarder/shipments'); setShipments(r.data || []); } catch(e) {}
+    try { const r = await api.get('/forwarder/shipments'); setShipments(r.data?.data || r.data || []); } catch(e) {}
   };
   useFocusEffect(useCallback(() => { fetch(); }, []));
   const onRefresh = async () => { setRefreshing(true); await fetch(); setRefreshing(false); };

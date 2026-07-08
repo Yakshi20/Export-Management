@@ -18,18 +18,24 @@ import CreateShipmentScreen from './src/screens/exporter/CreateShipmentScreen';
 import PreShipmentScreen from './src/screens/exporter/PreShipmentScreen';
 import PostShipmentScreen from './src/screens/exporter/PostShipmentScreen';
 import BuyersScreen from './src/screens/exporter/BuyersScreen';
+import ChaBookingScreen from './src/screens/exporter/ChaBookingScreen';
+import ForwarderBookingScreen from './src/screens/exporter/ForwarderBookingScreen';
+import DocumentationScreen from './src/screens/exporter/DocumentationScreen';
 
 import FarmerDashboard from './src/screens/farmer/FarmerDashboard';
 import ProductsScreen from './src/screens/farmer/ProductsScreen';
 
 import CHADashboard from './src/screens/cha/CHADashboard';
 import CustomsClearanceScreen from './src/screens/cha/CustomsClearanceScreen';
+import ChaAgentsScreen from './src/screens/cha/ChaAgentsScreen';
 
 import ForwarderDashboard from './src/screens/forwarder/ForwarderDashboard';
 import ForwarderShipmentsScreen from './src/screens/forwarder/ForwarderShipmentsScreen';
 
 import AdviserDashboard from './src/screens/adviser/AdviserDashboard';
 import ConsultationsScreen from './src/screens/adviser/ConsultationsScreen';
+
+import ChatScreen from './src/screens/shared/ChatScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -56,6 +62,8 @@ const ExporterHomeStack = () => (
     <Stack.Screen name="ExporterHome" component={ExporterDashboard} />
     <Stack.Screen name="PreShipment" component={PreShipmentScreen} />
     <Stack.Screen name="PostShipment" component={PostShipmentScreen} />
+    <Stack.Screen name="Documentation" component={DocumentationScreen} />
+    <Stack.Screen name="Chat" component={ChatScreen} />
   </Stack.Navigator>
 );
 
@@ -95,8 +103,13 @@ const ExporterTabs = () => (
     />
     <Tab.Screen
       name="CHA"
-      component={CustomsClearanceScreen}
+      component={ChaBookingScreen}
       options={{ tabBarLabel: 'CHA', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🛃</Text> }}
+    />
+    <Tab.Screen
+      name="Forwarder"
+      component={ForwarderBookingScreen}
+      options={{ tabBarLabel: 'Forwarder', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🚚</Text> }}
     />
     <Tab.Screen
       name="Adviser"
@@ -106,10 +119,13 @@ const ExporterTabs = () => (
   </Tab.Navigator>
 );
 
+const FarmerChatScreen = () => <ChatScreen userRole="farmer" />;
+
 const FarmerTabs = () => (
   <Tab.Navigator screenOptions={tabOptions}>
     <Tab.Screen name="Dashboard" component={FarmerDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text> }} />
     <Tab.Screen name="Products" component={ProductsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🌾</Text> }} />
+    <Tab.Screen name="Chat" component={FarmerChatScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>💬</Text> }} />
     <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>👤</Text> }} />
   </Tab.Navigator>
 );
@@ -118,22 +134,29 @@ const CHATabs = () => (
   <Tab.Navigator screenOptions={tabOptions}>
     <Tab.Screen name="Dashboard" component={CHADashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text> }} />
     <Tab.Screen name="Customs" component={CustomsClearanceScreen} options={{ tabBarLabel: 'Customs', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🛃</Text> }} />
+    <Tab.Screen name="Agents" component={ChaAgentsScreen} options={{ tabBarLabel: 'Agents', tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>📑</Text> }} />
     <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>👤</Text> }} />
   </Tab.Navigator>
 );
+
+const ForwarderChatScreen = () => <ChatScreen userRole="forwarder" />;
 
 const ForwarderTabs = () => (
   <Tab.Navigator screenOptions={tabOptions}>
     <Tab.Screen name="Dashboard" component={ForwarderDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text> }} />
     <Tab.Screen name="Shipments" component={ForwarderShipmentsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🚢</Text> }} />
+    <Tab.Screen name="Chat" component={ForwarderChatScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>💬</Text> }} />
     <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>👤</Text> }} />
   </Tab.Navigator>
 );
+
+const AdviserChatScreen = () => <ChatScreen userRole="adviser" />;
 
 const AdviserTabs = () => (
   <Tab.Navigator screenOptions={tabOptions}>
     <Tab.Screen name="Dashboard" component={AdviserDashboard} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>🏠</Text> }} />
     <Tab.Screen name="Consultations" component={ConsultationsScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>💼</Text> }} />
+    <Tab.Screen name="Chat" component={AdviserChatScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>💬</Text> }} />
     <Tab.Screen name="Profile" component={ProfileScreen} options={{ tabBarIcon: ({ color }) => <Text style={{ color, fontSize: 20 }}>👤</Text> }} />
   </Tab.Navigator>
 );

@@ -11,7 +11,7 @@ const AdviserDashboard = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   const fetch = async () => {
-    try { const r = await api.get('/adviser/consultations'); setConsultations(r.data || []); } catch(e) {}
+    try { const r = await api.get('/adviser/consultations'); setConsultations(r.data?.data || r.data || []); } catch(e) {}
   };
   useFocusEffect(useCallback(() => { fetch(); }, []));
   const onRefresh = async () => { setRefreshing(true); await fetch(); setRefreshing(false); };

@@ -13,7 +13,7 @@ const ShipmentsScreen = ({ navigation }) => {
   const fetchShipments = async () => {
     try {
       const res = await api.get('/exporter/shipments');
-      setShipments(res.data || []);
+      setShipments(res.data?.data || res.data || []);
     } catch (e) { console.error(e); }
   };
 
