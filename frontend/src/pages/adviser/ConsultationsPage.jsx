@@ -54,10 +54,10 @@ export default function ConsultationsPage() {
                       className="bg-white/5 border border-white/10 rounded px-2 py-1 text-white text-sm focus:outline-none focus:border-[#e94560]"
                       onChange={e => update(c._id, { status: e.target.value })}
                     >
-                      <option value="Pending" className="bg-[#16213e]">Pending</option>
-                      <option value="Confirmed" className="bg-[#16213e]">Confirmed</option>
-                      <option value="Completed" className="bg-[#16213e]">Completed</option>
-                      <option value="Cancelled" className="bg-[#16213e]">Cancelled</option>
+                      <option value="Pending" className="bg-[#16213e] text-white">Pending</option>
+                      <option value="Confirmed" className="bg-[#16213e] text-white">Confirmed</option>
+                      <option value="Completed" className="bg-[#16213e] text-white">Completed</option>
+                      <option value="Cancelled" className="bg-[#16213e] text-white">Cancelled</option>
                     </select>
                     <input type="date" className="bg-white/5 border border-white/10 rounded px-2 py-1 text-white text-sm focus:outline-none focus:border-[#e94560]"
                       onChange={e => update(c._id, { scheduledDate: e.target.value })} />

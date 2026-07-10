@@ -156,7 +156,7 @@ function BookingsPage() {
                   disabled={saving[c._id]}
                   className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-[#6366f1]"
                 >
-                  {['Pending', 'Confirmed', 'Completed', 'Cancelled'].map(s => <option key={s} value={s} className="bg-[#16213e]">{s}</option>)}
+                  {['Pending', 'Confirmed', 'Completed', 'Cancelled'].map(s => <option key={s} value={s} className="bg-[#16213e] text-white">{s}</option>)}
                 </select>
                 <input type="date" onChange={e => update(c._id, { scheduledDate: e.target.value })}
                   className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-white text-xs focus:outline-none focus:border-[#6366f1]" />

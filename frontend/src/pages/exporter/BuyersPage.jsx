@@ -25,7 +25,7 @@ function BuyerForm({ form, setForm, onSubmit, onClose, title, saving }) {
           <label className="text-sm text-[#a8b2d8] font-medium block mb-1">Status</label>
           <select value={form.status} onChange={e => setForm({...form, status: e.target.value})}
             className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
-            {['Interested', 'Negotiating', 'Confirmed'].map(s => <option key={s}>{s}</option>)}
+            {['Interested', 'Negotiating', 'Confirmed'].map(s => <option key={s} className="bg-[#16213e] text-white">{s}</option>)}
           </select>
         </div>
         <Input label="Address" value={form.address} onChange={e => setForm({...form, address: e.target.value})} />

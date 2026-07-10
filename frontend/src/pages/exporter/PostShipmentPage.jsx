@@ -49,8 +49,8 @@ export default function PostShipmentPage() {
         <label className="text-[#a8b2d8] text-sm font-medium block mb-2">Select Shipment</label>
         <select value={selectedId} onChange={e => loadTracking(e.target.value)}
           className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#e94560] w-full max-w-sm">
-          <option value="">-- Select Shipment --</option>
-          {shipments.map(s => <option key={s._id} value={s._id} className="bg-[#16213e]">{s.shipmentNumber} - {s.productName}</option>)}
+          <option value="" className="bg-[#16213e] text-white">-- Select Shipment --</option>
+          {shipments.map(s => <option key={s._id} value={s._id} className="bg-[#16213e] text-white">{s.shipmentNumber} - {s.productName}</option>)}
         </select>
       </Card>
 

@@ -21,7 +21,7 @@ function ChaForm({ form, setForm, onSubmit, onClose, title, saving }) {
           <label className="text-sm text-[#a8b2d8] font-medium block mb-1">Port / Location *</label>
           <select value={form.port} onChange={e => setForm({ ...form, port: e.target.value })}
             className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
-            {PORTS.map(p => <option key={p}>{p}</option>)}
+            {PORTS.map(p => <option key={p} className="bg-[#16213e] text-white">{p}</option>)}
           </select>
         </div>
         <Input label="Contact Phone *" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} required />
@@ -30,7 +30,7 @@ function ChaForm({ form, setForm, onSubmit, onClose, title, saving }) {
           <label className="text-sm text-[#a8b2d8] font-medium block mb-1">Specialization</label>
           <select value={form.specialization} onChange={e => setForm({ ...form, specialization: e.target.value })}
             className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
-            {['Air', 'Sea', 'Both'].map(s => <option key={s}>{s}</option>)}
+            {['Air', 'Sea', 'Both'].map(s => <option key={s} className="bg-[#16213e] text-white">{s}</option>)}
           </select>
         </div>
         <Input label="Customs Charges" value={form.customsCharges} onChange={e => setForm({ ...form, customsCharges: e.target.value })} placeholder="e.g. 2% of shipment value" />

@@ -170,7 +170,7 @@ function CropsPage() {
               <div>
                 <label className="text-[#a8b2d8] text-xs mb-1 block">Unit</label>
                 <select value={form.unit} onChange={e => setForm(f => ({ ...f, unit: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#6366f1]">
-                  {['kg', 'quintal', 'tonne', 'box', 'bag'].map(u => <option key={u} value={u} className="bg-[#16213e]">{u}</option>)}
+                  {['kg', 'quintal', 'tonne', 'box', 'bag'].map(u => <option key={u} value={u} className="bg-[#16213e] text-white">{u}</option>)}
                 </select>
               </div>
               <div>
@@ -186,9 +186,9 @@ function CropsPage() {
               <div>
                 <label className="text-[#a8b2d8] text-xs mb-1 block">Quality Grade</label>
                 <select value={form.quality} onChange={e => setForm(f => ({ ...f, quality: e.target.value }))} className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#6366f1]">
-                  <option value="A" className="bg-[#16213e]">Grade A (Export Quality)</option>
-                  <option value="B" className="bg-[#16213e]">Grade B (Standard)</option>
-                  <option value="C" className="bg-[#16213e]">Grade C (Domestic)</option>
+                  <option value="A" className="bg-[#16213e] text-white">Grade A (Export Quality)</option>
+                  <option value="B" className="bg-[#16213e] text-white">Grade B (Standard)</option>
+                  <option value="C" className="bg-[#16213e] text-white">Grade C (Domestic)</option>
                 </select>
               </div>
             </div>

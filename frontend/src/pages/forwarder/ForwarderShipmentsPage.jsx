@@ -78,9 +78,9 @@ export default function ForwarderShipmentsPage() {
             <label className="text-[#a8b2d8] text-sm block mb-1">Status</label>
             <select value={form.status} onChange={e => setForm({...form, status: e.target.value})}
               className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white w-full focus:outline-none focus:border-[#e94560]">
-              <option value="In Transit" className="bg-[#16213e]">In Transit</option>
-              <option value="Customs Clearance" className="bg-[#16213e]">Customs Clearance</option>
-              <option value="Delivered" className="bg-[#16213e]">Delivered</option>
+              <option value="In Transit" className="bg-[#16213e] text-white">In Transit</option>
+              <option value="Customs Clearance" className="bg-[#16213e] text-white">Customs Clearance</option>
+              <option value="Delivered" className="bg-[#16213e] text-white">Delivered</option>
             </select>
           </div>
           <div className="flex gap-3">

@@ -82,9 +82,9 @@ export default function CustomsClearancePage() {
             <label className="text-[#a8b2d8] text-sm block mb-1">Status</label>
             <select value={statusForm.status} onChange={e => setStatusForm({...statusForm, status: e.target.value})}
               className="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white w-full focus:outline-none focus:border-[#e94560]">
-              <option value="Under Review" className="bg-[#16213e]">Under Review</option>
-              <option value="Cleared" className="bg-[#16213e]">Cleared</option>
-              <option value="Rejected" className="bg-[#16213e]">Rejected</option>
+              <option value="Under Review" className="bg-[#16213e] text-white">Under Review</option>
+              <option value="Cleared" className="bg-[#16213e] text-white">Cleared</option>
+              <option value="Rejected" className="bg-[#16213e] text-white">Rejected</option>
             </select>
           </div>
           <div>

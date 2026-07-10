@@ -76,8 +76,8 @@ function DemandCheckerPage() {
       <h1 className="text-2xl font-bold text-white">🌍 Product Demand Checker</h1>
       <p className="text-[#a8b2d8] text-sm">Find which countries are buying what India exports most.</p>
       <select value={selected} onChange={e => setSelected(e.target.value)} className="w-full bg-[#16213e] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#6366f1]">
-        <option value="">-- Choose a product --</option>
-        {Object.keys(DEMAND_DATA).map(p => <option key={p}>{p}</option>)}
+        <option value="" className="bg-[#16213e] text-white">-- Choose a product --</option>
+        {Object.keys(DEMAND_DATA).map(p => <option key={p} className="bg-[#16213e] text-white">{p}</option>)}
       </select>
       {data ? (
         <Card>
@@ -174,8 +174,8 @@ function CountryRulesPage() {
       <h1 className="text-2xl font-bold text-white">📋 Country Rules & Restrictions</h1>
       <p className="text-[#a8b2d8] text-sm">Understand import rules, required certifications, and trade tips for each country.</p>
       <select value={selected} onChange={e => setSelected(e.target.value)} className="w-full bg-[#16213e] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#6366f1]">
-        <option value="">-- Choose a country --</option>
-        {Object.keys(COUNTRY_RULES).map(c => <option key={c}>{c}</option>)}
+        <option value="" className="bg-[#16213e] text-white">-- Choose a country --</option>
+        {Object.keys(COUNTRY_RULES).map(c => <option key={c} className="bg-[#16213e] text-white">{c}</option>)}
       </select>
       {data ? (
         <Card>

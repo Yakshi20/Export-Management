@@ -200,7 +200,7 @@ export default function DocumentationPage() {
                   onChange={e => setStatuses(s => ({ ...s, [key]: e.target.value }))}
                   className="bg-[#0a0a1a] border border-white/10 rounded-lg px-2 py-1 text-xs text-white focus:outline-none"
                 >
-                  {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                  {STATUS_OPTIONS.map(s => <option key={s} value={s} className="bg-[#16213e] text-white">{s}</option>)}
                 </select>
               </div>
               <input
@@ -236,8 +236,8 @@ export default function DocumentationPage() {
                 <select value={productForm.category}
                   onChange={e => setProductForm(f => ({ ...f, category: e.target.value, product: '', hsCode: '' }))}
                   className="w-full bg-[#0a0a1a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#6366f1]">
-                  <option value="">-- Select Category --</option>
-                  {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                  <option value="" className="bg-[#16213e] text-white">-- Select Category --</option>
+                  {CATEGORIES.map(c => <option key={c} className="bg-[#16213e] text-white">{c}</option>)}
                 </select>
               </div>
 
@@ -280,8 +280,8 @@ export default function DocumentationPage() {
                 <label className="text-[#a8b2d8] text-xs block mb-1">Packaging Type</label>
                 <select value={productForm.packaging} onChange={e => setProductForm(f => ({ ...f, packaging: e.target.value }))}
                   className="w-full bg-[#0a0a1a] border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#6366f1]">
-                  <option value="">-- Select --</option>
-                  {['Carton Box', 'Jute Bag', 'Wooden Crate', 'Plastic Bag', 'Vacuum Pack', 'Bulk Container'].map(p => <option key={p}>{p}</option>)}
+                  <option value="" className="bg-[#16213e] text-white">-- Select --</option>
+                  {['Carton Box', 'Jute Bag', 'Wooden Crate', 'Plastic Bag', 'Vacuum Pack', 'Bulk Container'].map(p => <option key={p} className="bg-[#16213e] text-white">{p}</option>)}
                 </select>
               </div>
 

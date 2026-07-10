@@ -86,8 +86,8 @@ export default function CreateShipmentPage() {
               <select value={form.productCategory} required
                 onChange={e => setForm(f => ({ ...f, productCategory: e.target.value, productName: '' }))}
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
-                <option value="" disabled>Select category</option>
-                {CATEGORIES.map(c => <option key={c}>{c}</option>)}
+                <option value="" disabled className="bg-[#16213e] text-white">Select category</option>
+                {CATEGORIES.map(c => <option key={c} className="bg-[#16213e] text-white">{c}</option>)}
               </select>
             </div>
             <Autocomplete label="Product *" value={form.productName} onChange={v => set('productName', v)}
@@ -111,7 +111,7 @@ export default function CreateShipmentPage() {
               <label className="text-sm text-[#a8b2d8] font-medium block mb-1">Shipping Method</label>
               <select value={form.shippingMethod} onChange={e => set('shippingMethod', e.target.value)}
                 className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm focus:outline-none">
-                {['Sea', 'Air', 'Road', 'Rail'].map(m => <option key={m}>{m}</option>)}
+                {['Sea', 'Air', 'Road', 'Rail'].map(m => <option key={m} className="bg-[#16213e] text-white">{m}</option>)}
               </select>
             </div>
           </div>
