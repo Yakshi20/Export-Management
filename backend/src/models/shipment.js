@@ -88,6 +88,15 @@ const shipmentSchema = new mongoose.Schema(
       ref: "User",
     },
 
+    chaAgentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ChaAgent",
+    },
+
+    qualityCertificate: {
+      type: String,
+    },
+
     letterOfCredit: {
       type: String,
     },
@@ -99,6 +108,17 @@ const shipmentSchema = new mongoose.Schema(
 
     complianceNotes: {
       type: String,
+    },
+
+    shipmentValue: {
+      type: Number,
+      default: 0,
+    },
+
+    shippingMethod: {
+      type: String,
+      enum: ['Air', 'Sea', 'Road', 'Rail'],
+      default: 'Sea',
     },
 
     shippingBillVerified: {

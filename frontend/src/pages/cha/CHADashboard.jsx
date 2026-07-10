@@ -2,11 +2,13 @@ import { Routes, Route } from 'react-router-dom';
 import DashboardLayout from '../../components/Layout/DashboardLayout';
 import Profile from '../../components/Profile';
 import CustomsClearancePage from './CustomsClearancePage';
+import AgentsPage from './AgentsPage';
 import Card from '../../components/ui/Card';
 
 const links = [
   { label: 'Dashboard', path: '/cha/dashboard', icon: '🏠' },
   { label: 'Customs Clearance', path: '/cha/customs', icon: '🛡️' },
+  { label: 'Agents', path: '/cha/agents', icon: '📑' },
   { label: 'Profile', path: '/cha/profile', icon: '👤' },
 ];
 
@@ -29,6 +31,7 @@ export default function CHADashboard() {
       <Routes>
         <Route path="/" element={<CHAHome />} />
         <Route path="/customs" element={<CustomsClearancePage />} />
+        <Route path="/agents" element={<AgentsPage />} />
         <Route path="/profile" element={<Profile role="cha" />} />
       </Routes>
     </DashboardLayout>

@@ -5,9 +5,31 @@ export const getAssignedShipments = async (req, res) => {
   try {
     const shipments = await Shipment.find({ assignedChaId: req.user.id })
       .populate("exporterId", "companyName email")
-      .populate("buyerId");
+      .populate("buyerId")
+      .populate("chaAgentId", "chaName port specialization");
 
     successResponse(res, "Assigned shipments fetched successfully", shipments);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const assignAgentToShipment = async (req, res) => {
+  try {
+    const { shipmentId } = req.params;
+    const { chaAgentId } = req.body;
+
+    const shipment = await Shipment.findOneAndUpdate(
+      { _id: shipmentId, assignedChaId: req.user.id },
+      { chaAgentId },
+      { new: true, runValidators: true }
+    );
+
+    if (!shipment) {
+      return res.status(404).json({ success: false, message: "Shipment not found" });
+    }
+
+    successResponse(res, "Agent assigned to shipment successfully", shipment);
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
