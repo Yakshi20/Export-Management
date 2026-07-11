@@ -22,4 +22,6 @@ eas build:configure
 eas build -p android --profile preview
 
 
+pss: Export@2026#
+
 
