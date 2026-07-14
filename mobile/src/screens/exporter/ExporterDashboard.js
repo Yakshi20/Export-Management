@@ -58,6 +58,33 @@ export default function ExporterDashboard({ navigation }) {
           </Card>
         </TouchableOpacity>
 
+        <Text style={styles.sectionTitle}>Documents & Communication</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Documentation')}>
+          <Card>
+            <View style={styles.cardRow}>
+              <Text style={styles.cardIcon}>🗂️</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cardTitle}>Documents</Text>
+                <Text style={styles.cardSubtitle}>User docs, product docs, verification</Text>
+              </View>
+              <Text style={styles.arrow}>›</Text>
+            </View>
+          </Card>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
+          <Card>
+            <View style={styles.cardRow}>
+              <Text style={styles.cardIcon}>💬</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cardTitle}>Messages</Text>
+                <Text style={styles.cardSubtitle}>Chat with buyers, forwarders & AI assistant</Text>
+              </View>
+              <Text style={styles.arrow}>›</Text>
+            </View>
+          </Card>
+        </TouchableOpacity>
+
       </ScrollView>
     </View>
   );

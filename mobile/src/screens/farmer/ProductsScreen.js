@@ -16,7 +16,7 @@ const ProductsScreen = () => {
   const [loading, setLoading] = useState(false);
 
   const fetch = async () => {
-    try { const r = await api.get('/farmer/products'); setProducts(r.data || []); } catch(e) {}
+    try { const r = await api.get('/farmer/products'); setProducts(r.data?.data || r.data || []); } catch(e) {}
   };
   useFocusEffect(useCallback(() => { fetch(); }, []));
   const onRefresh = async () => { setRefreshing(true); await fetch(); setRefreshing(false); };

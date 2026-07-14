@@ -14,14 +14,14 @@ const CustomsClearanceScreen = () => {
   const [expanded, setExpanded] = useState(null);
 
   const fetch = async () => {
-    try { const r = await api.get('/cha/assigned-shipments'); setShipments(r.data || []); } catch(e) {}
+    try { const r = await api.get('/cha/shipments'); setShipments(r.data?.data || r.data || []); } catch(e) {}
   };
   useFocusEffect(useCallback(() => { fetch(); }, []));
   const onRefresh = async () => { setRefreshing(true); await fetch(); setRefreshing(false); };
 
   const updateStatus = async (id, status) => {
     try {
-      await api.put(`/cha/shipments/${id}/status`, { status });
+      await api.put(`/cha/shipments/${id}/customs-status`, { status });
       Alert.alert('Updated', `Status set to ${status}`);
       fetch();
     } catch(e) { Alert.alert('Error', 'Failed to update status'); }
@@ -29,7 +29,7 @@ const CustomsClearanceScreen = () => {
 
   const verify = async (id) => {
     try {
-      await api.post(`/cha/verify-shipping-bill/${id}`);
+      await api.put(`/cha/shipments/${id}/verify-shipping-bill`);
       Alert.alert('Verified', 'Shipping bill verified');
     } catch(e) { Alert.alert('Error', 'Verification failed'); }
   };
